@@ -1,0 +1,29 @@
+# Arquivos Python
+*.pyc
+*.pyo
+__pycache__/
+# Diretórios virtuais
+env/
+venv/
+# Arquivos de configuração local
+local_settings.py
+env
+# Banco de dados SQLite
+db.sqlite3
+# Logs e relatórios
+*.log
+*.pot
+coverage
+cache/
+# Diretórios de mídia e estáticos gerados
+media/
+staticfiles/
+# Documentação gerada pelo Sphinx
+docs/_build/
+# Arquivos do PyCharm e IDEs similares
+idea/
+vscode/
+# Arquivos do sistema operacional (macOS/Linux)
+DS_Store
+directory
+.env
