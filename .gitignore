@@ -6,6 +6,6 @@
 *.log
 docs
 .agents
-infrastructure/secrets
+infrastructure/secrets/*
 skills-lock.json
 skills-lock.yaml
