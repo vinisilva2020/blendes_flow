@@ -1,15 +1,55 @@
-<script setup>
-import { Blend, Eye, EyeOff } from '@lucide/vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { Blend } from '@lucide/vue'
+
 import heroImage from '@/assets/img/hero.png'
 import GoogleAuthButton from '@/components/GoogleButton.vue'
+import type { LoginCredentials } from '@/domains/auth/contracts'
+import { useSignInMutation } from '@/domains/auth/queries'
+import { ApiRequestError } from '@/lib/http/errors'
+import { useAuthenticationStore } from '@/stores/authentication'
+
+import AuthSignInForm from './components/AuthSignInForm.vue'
 
 const router = useRouter()
-const showPassword = ref(false)
+const route = useRoute()
+const authenticationStore = useAuthenticationStore()
+const signInMutation = useSignInMutation()
 
-function goToOrganizations() {
-  router.push({ name: 'organizations' })
+const errorMessage = computed(() => {
+  const error = signInMutation.error.value
+
+  if (error instanceof ApiRequestError) {
+    return error.message
+  }
+
+  if (error) {
+    return 'Unable to sign in. Check your details and try again.'
+  }
+
+  return ''
+})
+
+async function submitSignIn(credentials: LoginCredentials) {
+  const tokens = await signInMutation.mutateAsync(credentials).catch(() => null)
+
+  if (!tokens) {
+    return
+  }
+
+  authenticationStore.startSession(tokens)
+  await router.push(getPostSignInLocation())
+}
+
+function getPostSignInLocation() {
+  const redirectPath = route.query.redirect
+
+  if (typeof redirectPath === 'string' && redirectPath.startsWith('/')) {
+    return redirectPath
+  }
+
+  return { name: 'organizations' }
 }
 </script>
 
@@ -61,9 +101,9 @@ function goToOrganizations() {
         class="relative flex min-h-screen flex-col border-l border-[#dbe8eb] bg-[#fbfeff] text-[#172224] shadow-[-18px_0_48px_rgb(18_33_36_/_6%)]"
       >
         <header class="flex items-center justify-between gap-4 px-7 py-6 max-[520px]:px-5">
-          <a
+          <RouterLink
             class="inline-flex items-center gap-2 text-sm font-extrabold text-[#172224] no-underline"
-            href="/"
+            :to="{ name: 'home' }"
             aria-label="Blendes Flow home"
           >
             <span
@@ -72,7 +112,7 @@ function goToOrganizations() {
               <Blend class="text-[#246b78]" :size="20" :stroke-width="2.4" aria-hidden="true" />
             </span>
             <span class="max-[520px]:hidden">Blendes Flow</span>
-          </a>
+          </RouterLink>
 
           <p class="m-0 text-xs font-bold text-[#4f666c]">
             Don't have an account?
@@ -107,50 +147,11 @@ function goToOrganizations() {
               <span class="h-px bg-[#dce8eb]"></span>
             </div>
 
-            <form class="grid gap-4" @submit.prevent="goToOrganizations">
-              <label class="grid gap-2" for="email">
-                <span class="text-xs font-extrabold leading-none text-[#172224]">Email</span>
-                <input
-                  id="email"
-                  class="min-h-11 w-full rounded-lg border border-[#d8e6e9] bg-white px-3.5 text-sm font-bold text-[#172224] shadow-[0_8px_18px_rgb(18_33_36_/_5%),inset_0_1px_0_rgb(255_255_255_/_92%)] outline-none transition duration-180 placeholder:text-[#9aaeb2] focus:border-[#8adff3] focus:shadow-[0_0_0_4px_rgb(174_238_255_/_26%),0_10px_24px_rgb(18_33_36_/_7%)]"
-                  name="email"
-                  type="email"
-                  autocomplete="email"
-                  placeholder="you@example.com"
-                />
-              </label>
-
-              <label class="grid gap-2" for="password">
-                <span class="text-xs font-extrabold leading-none text-[#172224]">Password</span>
-                <span class="relative block">
-                  <input
-                    id="password"
-                    class="auth-password-input min-h-11 w-full rounded-lg border border-[#d8e6e9] bg-white px-3.5 pr-11 text-sm font-bold text-[#172224] shadow-[0_8px_18px_rgb(18_33_36_/_5%),inset_0_1px_0_rgb(255_255_255_/_92%)] outline-none transition duration-180 placeholder:text-[#9aaeb2] focus:border-[#8adff3] focus:shadow-[0_0_0_4px_rgb(174_238_255_/_26%),0_10px_24px_rgb(18_33_36_/_7%)]"
-                    name="password"
-                    :type="showPassword ? 'text' : 'password'"
-                    autocomplete="current-password"
-                    placeholder="Minimum 8 characters"
-                  />
-                  <button
-                    class="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-[#7a8f94] transition duration-180 hover:bg-[#eef7f9] hover:text-[#246b78] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aeeeff] motion-reduce:transition-none"
-                    type="button"
-                    :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                    :aria-pressed="showPassword"
-                    @click="showPassword = !showPassword"
-                  >
-                    <EyeOff v-if="showPassword" :size="17" :stroke-width="2.2" aria-hidden="true" />
-                    <Eye v-else :size="17" :stroke-width="2.2" aria-hidden="true" />
-                  </button>
-                </span>
-              </label>
-
-              <button
-                class="mt-1 inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-[#2b7f8f] bg-[#246b78] text-sm font-black leading-none text-white shadow-[0_16px_30px_rgb(18_33_36_/_18%),0_0_24px_rgb(174_238_255_/_18%),inset_0_1px_0_rgb(255_255_255_/_14%)] transition duration-180 hover:-translate-y-px hover:border-[#236575] hover:bg-[#1f5f6d] hover:shadow-[0_18px_36px_rgb(18_33_36_/_22%),0_0_28px_rgb(174_238_255_/_22%),inset_0_1px_0_rgb(255_255_255_/_16%)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#aeeeff]/70 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                type="submit"
-              >
-                Sign in
-              </button>
-            </form>
+            <AuthSignInForm
+              :error-message="errorMessage"
+              :is-pending="signInMutation.isPending.value"
+              @submit="submitSignIn"
+            />
 
             <RouterLink
               class="mt-4 block text-center text-xs font-extrabold text-[#172224] underline decoration-[#aeeeff] decoration-2 underline-offset-4"
@@ -164,7 +165,7 @@ function goToOrganizations() {
         <footer
           class="flex items-center justify-between gap-4 px-7 py-5 text-[0.7rem] font-bold text-[#7a8f94] max-[520px]:px-5"
         >
-          <span>© 2026 Blendes</span>
+          <span>2026 Blendes</span>
           <div class="flex gap-4">
             <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#privacy">Privacy</a>
             <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#support">Support</a>
@@ -174,18 +175,3 @@ function goToOrganizations() {
     </section>
   </main>
 </template>
-
-<style scoped>
-.auth-password-input::-ms-reveal,
-.auth-password-input::-ms-clear {
-  display: none;
-}
-
-.auth-password-input::-webkit-credentials-auto-fill-button,
-.auth-password-input::-webkit-caps-lock-indicator,
-.auth-password-input::-webkit-clear-button {
-  display: none;
-  visibility: hidden;
-  pointer-events: none;
-}
-</style>
