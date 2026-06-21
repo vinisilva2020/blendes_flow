@@ -1,0 +1,11 @@
+.vscode
+.claude
+.cursor
+.windsurf
+.idea
+*.log
+docs
+.agents
+infrastructure/secrets
+skills-lock.json
+skills-lock.yaml

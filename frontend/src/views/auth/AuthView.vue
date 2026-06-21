@@ -1,10 +1,12 @@
 <script setup>
-import { Blend, Eye } from '@lucide/vue'
+import { Blend, Eye, EyeOff } from '@lucide/vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import heroImage from '@/assets/img/hero.png'
-import GoogleAuthButton from '@/components/buttons/GoogleButton.vue'
+import GoogleAuthButton from '@/components/GoogleButton.vue'
 
 const router = useRouter()
+const showPassword = ref(false)
 
 function goToOrganizations() {
   router.push({ name: 'organizations' })
@@ -39,12 +41,12 @@ function goToOrganizations() {
           <h1
             class="m-0 text-[clamp(1.75rem,2.4vw,2.7rem)] font-extrabold leading-[1.06] text-white"
           >
-            Uma plataforma para entender e melhorar fluxos.
+            A platform to understand and improve flows.
           </h1>
 
           <p class="mx-auto mt-4 max-w-[360px] text-sm font-semibold leading-6 text-white/62">
-            O Blendes transforma sinais, rotinas e indicadores em uma leitura clara para evoluir com
-            mais precisão.
+            Blendes turns signals, routines, and metrics into clear insights so you can improve with
+            greater precision.
           </p>
 
           <div class="mt-8 flex justify-center gap-2" aria-hidden="true">
@@ -73,11 +75,11 @@ function goToOrganizations() {
           </a>
 
           <p class="m-0 text-xs font-bold text-[#4f666c]">
-            Não tem conta?
+            Don't have an account?
             <RouterLink
               class="font-extrabold text-[#172224] underline decoration-[#aeeeff] decoration-2 underline-offset-4"
               to="/register"
-              >Criar conta</RouterLink
+              >Create account</RouterLink
             >
           </p>
         </header>
@@ -86,10 +88,10 @@ function goToOrganizations() {
           <div class="w-full max-w-[390px]">
             <div class="mb-6 text-center">
               <h2 class="m-0 text-[1.55rem] font-extrabold leading-tight text-[#172224]">
-                Bem-vindo de volta ao Blendes
+                Welcome back to Blendes
               </h2>
               <p class="mt-2 text-sm font-semibold leading-5 text-[#6c8085]">
-                Entre com seus dados para continuar acompanhando seus fluxos.
+                Sign in with your details to keep tracking your flows.
               </p>
             </div>
 
@@ -100,7 +102,7 @@ function goToOrganizations() {
             <div class="my-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-hidden="true">
               <span class="h-px bg-[#dce8eb]"></span>
               <p class="m-0 text-xs font-extrabold uppercase leading-none text-[#7a8f94]">
-                ou entre com
+                or sign in with
               </p>
               <span class="h-px bg-[#dce8eb]"></span>
             </div>
@@ -114,7 +116,7 @@ function goToOrganizations() {
                   name="email"
                   type="email"
                   autocomplete="email"
-                  placeholder="seu@email.com"
+                  placeholder="you@example.com"
                 />
               </label>
 
@@ -123,18 +125,22 @@ function goToOrganizations() {
                 <span class="relative block">
                   <input
                     id="password"
-                    class="min-h-11 w-full rounded-lg border border-[#d8e6e9] bg-white px-3.5 pr-11 text-sm font-bold text-[#172224] shadow-[0_8px_18px_rgb(18_33_36_/_5%),inset_0_1px_0_rgb(255_255_255_/_92%)] outline-none transition duration-180 placeholder:text-[#9aaeb2] focus:border-[#8adff3] focus:shadow-[0_0_0_4px_rgb(174_238_255_/_26%),0_10px_24px_rgb(18_33_36_/_7%)]"
+                    class="auth-password-input min-h-11 w-full rounded-lg border border-[#d8e6e9] bg-white px-3.5 pr-11 text-sm font-bold text-[#172224] shadow-[0_8px_18px_rgb(18_33_36_/_5%),inset_0_1px_0_rgb(255_255_255_/_92%)] outline-none transition duration-180 placeholder:text-[#9aaeb2] focus:border-[#8adff3] focus:shadow-[0_0_0_4px_rgb(174_238_255_/_26%),0_10px_24px_rgb(18_33_36_/_7%)]"
                     name="password"
-                    type="password"
+                    :type="showPassword ? 'text' : 'password'"
                     autocomplete="current-password"
-                    placeholder="Mínimo 8 caracteres"
+                    placeholder="Minimum 8 characters"
                   />
-                  <Eye
-                    class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#7a8f94]"
-                    :size="17"
-                    :stroke-width="2.2"
-                    aria-hidden="true"
-                  />
+                  <button
+                    class="absolute right-2 top-1/2 inline-flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-[#7a8f94] transition duration-180 hover:bg-[#eef7f9] hover:text-[#246b78] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#aeeeff] motion-reduce:transition-none"
+                    type="button"
+                    :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                    :aria-pressed="showPassword"
+                    @click="showPassword = !showPassword"
+                  >
+                    <EyeOff v-if="showPassword" :size="17" :stroke-width="2.2" aria-hidden="true" />
+                    <Eye v-else :size="17" :stroke-width="2.2" aria-hidden="true" />
+                  </button>
                 </span>
               </label>
 
@@ -142,7 +148,7 @@ function goToOrganizations() {
                 class="mt-1 inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-lg border border-[#2b7f8f] bg-[#246b78] text-sm font-black leading-none text-white shadow-[0_16px_30px_rgb(18_33_36_/_18%),0_0_24px_rgb(174_238_255_/_18%),inset_0_1px_0_rgb(255_255_255_/_14%)] transition duration-180 hover:-translate-y-px hover:border-[#236575] hover:bg-[#1f5f6d] hover:shadow-[0_18px_36px_rgb(18_33_36_/_22%),0_0_28px_rgb(174_238_255_/_22%),inset_0_1px_0_rgb(255_255_255_/_16%)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#aeeeff]/70 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 type="submit"
               >
-                Entrar
+                Sign in
               </button>
             </form>
 
@@ -150,7 +156,7 @@ function goToOrganizations() {
               class="mt-4 block text-center text-xs font-extrabold text-[#172224] underline decoration-[#aeeeff] decoration-2 underline-offset-4"
               to="/forgot-password"
             >
-              Esqueceu sua senha?
+              Forgot your password?
             </RouterLink>
           </div>
         </div>
@@ -160,13 +166,26 @@ function goToOrganizations() {
         >
           <span>© 2026 Blendes</span>
           <div class="flex gap-4">
-            <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#privacy"
-              >Privacidade</a
-            >
-            <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#support">Suporte</a>
+            <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#privacy">Privacy</a>
+            <a class="text-[#62777d] no-underline hover:text-[#172224]" href="#support">Support</a>
           </div>
         </footer>
       </section>
     </section>
   </main>
 </template>
+
+<style scoped>
+.auth-password-input::-ms-reveal,
+.auth-password-input::-ms-clear {
+  display: none;
+}
+
+.auth-password-input::-webkit-credentials-auto-fill-button,
+.auth-password-input::-webkit-caps-lock-indicator,
+.auth-password-input::-webkit-clear-button {
+  display: none;
+  visibility: hidden;
+  pointer-events: none;
+}
+</style>
