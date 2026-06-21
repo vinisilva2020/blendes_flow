@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "apps.authentication.apps.AuthenticationConfig",
+    "apps.organizations.apps.OrganizationsConfig",
 ]
 
 MIDDLEWARE = [
