@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useAuthenticationStore } from '@/stores/authentication'
+import { useWorkspaceStore } from '@/stores/workspace'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -12,6 +15,9 @@ const router = createRouter({
       path: '/auth',
       name: 'auth',
       component: () => import('../views/auth/AuthView.vue'),
+      meta: {
+        guestOnly: true,
+      },
     },
     {
       path: '/register',
@@ -38,10 +44,17 @@ const router = createRouter({
       name: 'organizations',
       alias: ['/organization', '/workspace', '/workspaces'],
       component: () => import('../views/organizations/OrganizationsView.vue'),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/dashboard',
       component: () => import('../layouts/DashboardLayout.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
       children: [
         {
           path: '',
@@ -96,6 +109,31 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+router.beforeEach((to) => {
+  const authenticationStore = useAuthenticationStore()
+  const workspaceStore = useWorkspaceStore()
+  const requiresAuth = to.matched.some((route) => route.meta.requiresAuth)
+  const requiresWorkspace = to.matched.some((route) => route.meta.requiresWorkspace)
+  const guestOnly = to.matched.some((route) => route.meta.guestOnly)
+
+  if (requiresAuth && !authenticationStore.isAuthenticated) {
+    return {
+      name: 'auth',
+      query: {
+        redirect: to.fullPath,
+      },
+    }
+  }
+
+  if (guestOnly && authenticationStore.isAuthenticated) {
+    return { name: 'organizations' }
+  }
+
+  if (requiresWorkspace && !workspaceStore.hasWorkspace) {
+    return { name: 'organizations' }
+  }
 })
 
 export default router

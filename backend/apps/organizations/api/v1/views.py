@@ -1,7 +1,9 @@
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.authentication.api.v1.serializers import APIErrorSerializerV1
 from apps.organizations.api.v1.serializers import (
     OrganizationInputSerializerV1,
     OrganizationOutputSerializerV1,
@@ -23,11 +25,28 @@ class OrganizationsAPIViewV1(OrganizationAPIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["Organizations"],
+        responses={
+            200: OrganizationOutputSerializerV1(many=True),
+            401: APIErrorSerializerV1,
+        },
+    )
     def get(self, request):
         organizations = list_user_organizations_service(user=request.user)
         serializer = OrganizationOutputSerializerV1(organizations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=["Organizations"],
+        request=OrganizationInputSerializerV1,
+        responses={
+            201: OrganizationOutputSerializerV1,
+            400: APIErrorSerializerV1,
+            401: APIErrorSerializerV1,
+            409: APIErrorSerializerV1,
+        },
+    )
     def post(self, request):
         input_serializer = OrganizationInputSerializerV1(data=request.data)
         input_serializer.is_valid(raise_exception=True)
@@ -49,6 +68,15 @@ class OrganizationDetailAPIViewV1(OrganizationAPIView):
         IsOrganizationMemberReadOnlyOrAdminOwnerWrite,
     ]
 
+    @extend_schema(
+        tags=["Organizations"],
+        responses={
+            200: OrganizationOutputSerializerV1,
+            401: APIErrorSerializerV1,
+            403: APIErrorSerializerV1,
+            404: APIErrorSerializerV1,
+        },
+    )
     def get(self, request, organization_id):
         organization = get_user_organization_service(
             user=request.user,
@@ -59,6 +87,18 @@ class OrganizationDetailAPIViewV1(OrganizationAPIView):
         serializer = OrganizationOutputSerializerV1(organization)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=["Organizations"],
+        request=OrganizationPartialInputSerializerV1,
+        responses={
+            200: OrganizationOutputSerializerV1,
+            400: APIErrorSerializerV1,
+            401: APIErrorSerializerV1,
+            403: APIErrorSerializerV1,
+            404: APIErrorSerializerV1,
+            409: APIErrorSerializerV1,
+        },
+    )
     def patch(self, request, organization_id):
         organization = get_user_organization_service(
             user=request.user,
@@ -78,6 +118,16 @@ class OrganizationDetailAPIViewV1(OrganizationAPIView):
         output_serializer = OrganizationOutputSerializerV1(organization)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        tags=["Organizations"],
+        request=None,
+        responses={
+            204: OpenApiResponse(description="Organization deleted."),
+            401: APIErrorSerializerV1,
+            403: APIErrorSerializerV1,
+            404: APIErrorSerializerV1,
+        },
+    )
     def delete(self, request, organization_id):
         organization = get_user_organization_service(
             user=request.user,

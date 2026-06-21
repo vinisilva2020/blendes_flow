@@ -3,22 +3,44 @@ import { computed } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import BaseHeader from '@/components/BaseHeader.vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
+import { useWorkspaceStore } from '@/stores/workspace'
 
 const route = useRoute()
+const workspaceStore = useWorkspaceStore()
 
 const headerTitle = computed(() =>
   typeof route.meta.headerTitle === 'string' ? route.meta.headerTitle : 'Dashboard',
 )
 
-const headerSubtitle = computed(() =>
-  typeof route.meta.headerSubtitle === 'string'
-    ? route.meta.headerSubtitle
-    : 'Track workspace activity and keep flows moving.',
-)
+const headerSubtitle = computed(() => {
+  const subtitle =
+    typeof route.meta.headerSubtitle === 'string'
+      ? route.meta.headerSubtitle
+      : 'Track workspace activity and keep flows moving.'
 
-const headerAvatarLabel = computed(() =>
-  typeof route.meta.headerAvatarLabel === 'string' ? route.meta.headerAvatarLabel : 'BF',
-)
+  if (!workspaceStore.organizationName) {
+    return subtitle
+  }
+
+  return `${workspaceStore.organizationName} · ${subtitle}`
+})
+
+const headerAvatarLabel = computed(() => {
+  if (workspaceStore.organizationName) {
+    return getInitials(workspaceStore.organizationName)
+  }
+
+  return typeof route.meta.headerAvatarLabel === 'string' ? route.meta.headerAvatarLabel : 'BF'
+})
+
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('')
+}
 </script>
 
 <template>
