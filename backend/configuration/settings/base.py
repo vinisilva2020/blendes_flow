@@ -68,6 +68,17 @@ if not 60 <= AUTH_SESSION_LIFETIME_SECONDS <= 60 * 60 * 24 * 90:
 DEBUG = False
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
+CORS_ALLOWED_ORIGINS = env.list("DJANGO_CORS_ALLOWED_ORIGINS", default=[])
+CORS_ALLOW_CREDENTIALS = env.bool("DJANGO_CORS_ALLOW_CREDENTIALS", default=False)
+CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "x-csrftoken",
+    "x-requested-with",
+]
+CORS_MAX_AGE = env.int("DJANGO_CORS_MAX_AGE", default=86400)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -80,10 +91,12 @@ INSTALLED_APPS = [
     "django_filters",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.organizations.apps.OrganizationsConfig",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "configuration.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -177,6 +190,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.authentication.models.SessionJWTAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
@@ -194,6 +208,12 @@ REST_FRAMEWORK = {
             default="5/hour",
         ),
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Blendes Flow API",
+    "DESCRIPTION": "API do Blendes Flow",
+    "VERSION": "1.0.0",
 }
 
 # Simple JWT is limited to short-lived access tokens. Refresh tokens are opaque

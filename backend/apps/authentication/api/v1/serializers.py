@@ -53,6 +53,16 @@ class AuthenticationSessionOutputSerializerV1(serializers.ModelSerializer):
             "expires_at",
         ]
 
-    def get_is_current(self, obj):
+    def get_is_current(self, obj) -> bool:
         """Indica se esta sessão é a sessão atual do usuário."""
         return str(obj.id) == self.context.get("current_session_id")
+
+
+class APIErrorBodySerializerV1(serializers.Serializer):
+    code = serializers.CharField(read_only=True)
+    message = serializers.CharField(read_only=True)
+    details = serializers.JSONField(read_only=True, allow_null=True)
+
+
+class APIErrorSerializerV1(serializers.Serializer):
+    error = APIErrorBodySerializerV1(read_only=True)

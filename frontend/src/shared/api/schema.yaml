@@ -1,0 +1,676 @@
+openapi: 3.0.3
+info:
+  title: Blendes Flow API
+  version: 1.0.0
+  description: API do Blendes Flow
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/authentication/login/:
+    post:
+      operationId: v1_authentication_login_create
+      description: Autentica um usuário e retorna os tokens de acesso e refresh.
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginInputSerializerV1'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/authentication/logout/:
+    post:
+      operationId: v1_authentication_logout_create
+      description: Revoga a sessão de autenticação atual do usuário.
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: Authentication session revoked.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/authentication/refresh/:
+    post:
+      operationId: v1_authentication_refresh_create
+      description: Renova os tokens de acesso e refresh usando um token de refresh
+        válido.
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenInputSerializerV1'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/authentication/sessions/:
+    get:
+      operationId: v1_authentication_sessions_list
+      description: Retorna as sessões de autenticação ativas do usuário.
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthenticationSessionOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/authentication/sessions/{session_id}/:
+    delete:
+      operationId: v1_authentication_sessions_destroy
+      description: Revoga a sessão de autenticação especificada pelo ID.
+      parameters:
+      - in: path
+        name: session_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - Authentication
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: Authentication session revoked.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/organizations/:
+    get:
+      operationId: v1_organizations_list
+      description: List and create organizations for the authenticated user.
+      tags:
+      - Organizations
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganizationOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_organizations_create
+      description: List and create organizations for the authenticated user.
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationInputSerializerV1'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/organizations/{organization_id}/:
+    get:
+      operationId: v1_organizations_retrieve
+      description: Retrieve, update and delete one organization for the authenticated
+        user.
+      parameters:
+      - in: path
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Organizations
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_organizations_partial_update
+      description: Retrieve, update and delete one organization for the authenticated
+        user.
+      parameters:
+      - in: path
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationPartialInputSerializerV1'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_organizations_destroy
+      description: Retrieve, update and delete one organization for the authenticated
+        user.
+      parameters:
+      - in: path
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Organizations
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: Organization deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+components:
+  schemas:
+    APIErrorBodySerializerV1:
+      type: object
+      properties:
+        code:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        details:
+          readOnly: true
+          nullable: true
+      required:
+      - code
+      - details
+      - message
+    APIErrorSerializerV1:
+      type: object
+      properties:
+        error:
+          allOf:
+          - $ref: '#/components/schemas/APIErrorBodySerializerV1'
+          readOnly: true
+      required:
+      - error
+    AuthenticationOutputSerializerV1:
+      type: object
+      description: Serializa os dados de autenticação para a resposta da API.
+      properties:
+        access_token:
+          type: string
+          readOnly: true
+        refresh_token:
+          type: string
+          readOnly: true
+        token_type:
+          type: string
+          readOnly: true
+        access_expires_in:
+          type: integer
+          readOnly: true
+        refresh_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        session_id:
+          type: string
+          format: uuid
+          readOnly: true
+      required:
+      - access_expires_in
+      - access_token
+      - refresh_expires_at
+      - refresh_token
+      - session_id
+      - token_type
+    AuthenticationSessionOutputSerializerV1:
+      type: object
+      description: Serializa os dados de uma sessão de autenticação ativa.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        is_current:
+          type: boolean
+          description: Indica se esta sessão é a sessão atual do usuário.
+          readOnly: true
+        last_used_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - created_at
+      - id
+      - is_current
+    LoginInputSerializerV1:
+      type: object
+      description: Valida o identificador e a senha usados para autenticação.
+      properties:
+        identifier:
+          type: string
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - identifier
+      - password
+    OrganizationInputSerializerV1:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+      required:
+      - name
+    OrganizationOutputSerializerV1:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    PatchedOrganizationPartialInputSerializerV1:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+    RefreshTokenInputSerializerV1:
+      type: object
+      description: Valida o token de refresh usado para obter um novo access token.
+      properties:
+        refresh_token:
+          type: string
+          writeOnly: true
+          maxLength: 256
+      required:
+      - refresh_token
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Short-lived JWT access token issued by the authentication API.
