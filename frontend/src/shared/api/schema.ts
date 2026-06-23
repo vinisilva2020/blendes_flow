@@ -26,6 +26,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/accounts/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Register a local user account. */
+        post: operations["v1_accounts_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/me/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+        get: operations["v1_accounts_me_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+        delete: operations["v1_accounts_me_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+        patch: operations["v1_accounts_me_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/authentication/google/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Autentica usando a credencial do Google Identity Services. */
+        post: operations["v1_authentication_google_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/authentication/login/": {
         parameters: {
             query?: never;
@@ -160,6 +213,35 @@ export interface components {
         APIErrorSerializerV1: {
             readonly error: components["schemas"]["APIErrorBodySerializerV1"];
         };
+        AccountOutputSerializerV1: {
+            readonly id: number;
+            /**
+             * Usuário
+             * @description Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
+             */
+            readonly username: string;
+            /** Format: email */
+            readonly email: string;
+            readonly avatar_type: string | null;
+            /**
+             * Ativo
+             * @description Indica que o usuário será tratado como ativo. Ao invés de excluir contas de usuário, desmarque isso.
+             */
+            readonly is_active: boolean;
+            /**
+             * Data de registro
+             * Format: date-time
+             */
+            readonly date_joined: string;
+        };
+        AccountRegistrationInputSerializerV1: {
+            username: string;
+            /** Format: email */
+            email: string;
+            password: string;
+            password_confirm: string;
+            avatar_type?: string | null;
+        };
         /** @description Serializa os dados de autenticação para a resposta da API. */
         AuthenticationOutputSerializerV1: {
             readonly access_token: string;
@@ -184,8 +266,13 @@ export interface components {
             /** Format: date-time */
             expires_at?: string | null;
         };
+        /** @description Valida a credencial de login emitida pelo Google Identity Services. */
+        GoogleLoginInputSerializerV1: {
+            credential: string;
+        };
         /** @description Valida o identificador e a senha usados para autenticação. */
         LoginInputSerializerV1: {
+            /** Format: email */
             identifier: string;
             password: string;
         };
@@ -202,6 +289,12 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        PatchedAccountPartialInputSerializerV1: {
+            username?: string;
+            /** Format: email */
+            email?: string;
+            avatar_type?: string | null;
         };
         PatchedOrganizationPartialInputSerializerV1: {
             name?: string;
@@ -249,6 +342,238 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    v1_accounts_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountRegistrationInputSerializerV1"];
+                "application/x-www-form-urlencoded": components["schemas"]["AccountRegistrationInputSerializerV1"];
+                "multipart/form-data": components["schemas"]["AccountRegistrationInputSerializerV1"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_accounts_me_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_accounts_me_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Account deactivated. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_accounts_me_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
+                "multipart/form-data": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_authentication_google_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleLoginInputSerializerV1"];
+                "application/x-www-form-urlencoded": components["schemas"]["GoogleLoginInputSerializerV1"];
+                "multipart/form-data": components["schemas"]["GoogleLoginInputSerializerV1"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthenticationOutputSerializerV1"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
                 };
             };
         };

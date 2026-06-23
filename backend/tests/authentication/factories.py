@@ -4,7 +4,12 @@ from itertools import count
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.authentication.models import AuthenticationSession, AuthenticationTokens
+from apps.authentication.models import (
+    AuthenticationSession,
+    AuthenticationTokens,
+    SocialIdentity,
+    SocialIdentityProvider,
+)
 
 
 DEFAULT_PASSWORD = "StrongTestPassword123!"
@@ -38,6 +43,24 @@ def create_authentication_session(
         refresh_token_hash=AuthenticationTokens.hash_refresh_token(refresh_secret),
         expires_at=expires_at,
         revoked_at=revoked_at,
+    )
+
+
+def create_social_identity(
+    *,
+    user=None,
+    provider=SocialIdentityProvider.GOOGLE,
+    provider_subject="google-subject",
+    email="google-user@example.com",
+    email_verified=True,
+):
+    user = user or create_user(email=email)
+    return SocialIdentity.objects.create(
+        user=user,
+        provider=provider,
+        provider_subject=provider_subject,
+        email=email,
+        email_verified=email_verified,
     )
 
 
