@@ -8,6 +8,7 @@ from apps.authentication.api.v1.serializers import (
     APIErrorSerializerV1,
     AuthenticationOutputSerializerV1,
     AuthenticationSessionOutputSerializerV1,
+    GoogleLoginInputSerializerV1,
     LoginInputSerializerV1,
     RefreshTokenInputSerializerV1,
 )
@@ -18,6 +19,7 @@ from apps.authentication.common.throttles import (
 from apps.authentication.common.views import AuthenticationAPIView
 from apps.authentication.models import AuthenticationSession
 from apps.authentication.services import (
+    authenticate_google_user_service,
     authenticate_user_service,
     refresh_authentication_session_service,
     revoke_authentication_session_service,
@@ -50,6 +52,39 @@ class LoginAPIViewV1(AuthenticationAPIView):
         tokens = authenticate_user_service(
             identifier=input_serializer.validated_data["identifier"],
             password=input_serializer.validated_data["password"],
+        )
+        output_serializer = AuthenticationOutputSerializerV1(tokens)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+class GoogleLoginAPIViewV1(AuthenticationAPIView):
+    """Autentica um usuario com uma credencial validada pelo Google."""
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    throttle_classes = [LoginRateThrottle]
+
+    @extend_schema(
+        tags=["Authentication"],
+        request=GoogleLoginInputSerializerV1,
+        responses={
+            200: AuthenticationOutputSerializerV1,
+            400: APIErrorSerializerV1,
+            401: APIErrorSerializerV1,
+            403: APIErrorSerializerV1,
+            409: APIErrorSerializerV1,
+            429: APIErrorSerializerV1,
+            503: APIErrorSerializerV1,
+        },
+        auth=[],
+    )
+    def post(self, request):
+        """Autentica usando a credencial do Google Identity Services."""
+        input_serializer = GoogleLoginInputSerializerV1(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        tokens = authenticate_google_user_service(
+            credential=input_serializer.validated_data["credential"],
         )
         output_serializer = AuthenticationOutputSerializerV1(tokens)
         return Response(output_serializer.data, status=status.HTTP_200_OK)

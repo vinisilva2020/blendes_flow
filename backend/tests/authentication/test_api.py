@@ -1,9 +1,12 @@
+from unittest.mock import patch
+
 from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.authentication.models import AuthenticationSession
+from apps.authentication.exceptions import InvalidGoogleCredentialError
+from apps.authentication.models import AuthenticationSession, SocialIdentity
 from tests.authentication.factories import (
     DEFAULT_PASSWORD,
     create_authentication_session,
@@ -19,7 +22,7 @@ class AuthenticationAPITests(APITestCase):
         response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",
@@ -38,12 +41,12 @@ class AuthenticationAPITests(APITestCase):
         )
 
     def test_login_rejects_invalid_credentials(self):
-        create_user(username="api-login-user")
+        create_user(username="api-login-user", email="api-login-user@example.com")
 
         response = self.client.post(
             reverse("login"),
             {
-                "identifier": "api-login-user",
+                "identifier": "api-login-user@example.com",
                 "password": "wrong-password",
             },
             format="json",
@@ -52,12 +55,93 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data["error"]["code"], "invalid_credentials")
 
+    def test_login_rejects_inactive_user(self):
+        user = create_user(username="api-inactive-user", is_active=False)
+
+        response = self.client.post(
+            reverse("login"),
+            {
+                "identifier": user.email,
+                "password": DEFAULT_PASSWORD,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data["error"]["code"], "invalid_credentials")
+
+    def test_google_login_returns_tokens_and_creates_identity(self):
+        claims = {
+            "sub": "api-google-subject",
+            "email": "api-google@example.com",
+            "email_verified": True,
+            "given_name": "Api",
+            "family_name": "Google",
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            response = self.client.post(
+                reverse("google-login"),
+                {"credential": "google-credential"},
+                format="json",
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access_token", response.data)
+        self.assertIn("refresh_token", response.data)
+        self.assertEqual(response.data["token_type"], "Bearer")
+        self.assertTrue(
+            SocialIdentity.objects.filter(
+                provider="google",
+                provider_subject="api-google-subject",
+                email="api-google@example.com",
+            ).exists()
+        )
+
+    def test_google_login_rejects_existing_local_email(self):
+        create_user(email="api-conflict@example.com")
+        claims = {
+            "sub": "api-google-conflict",
+            "email": "api-conflict@example.com",
+            "email_verified": True,
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            response = self.client.post(
+                reverse("google-login"),
+                {"credential": "google-credential"},
+                format="json",
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(response.data["error"]["code"], "google_account_conflict")
+
+    def test_google_login_rejects_invalid_credential(self):
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            side_effect=InvalidGoogleCredentialError,
+        ):
+            response = self.client.post(
+                reverse("google-login"),
+                {"credential": "invalid-google-credential"},
+                format="json",
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data["error"]["code"], "invalid_google_credential")
+
     def test_refresh_returns_rotated_refresh_token(self):
         user = create_user(username="api-refresh-user")
         login_response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",
@@ -83,7 +167,7 @@ class AuthenticationAPITests(APITestCase):
         login_response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",
@@ -110,7 +194,7 @@ class AuthenticationAPITests(APITestCase):
         login_response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",
@@ -140,7 +224,7 @@ class AuthenticationAPITests(APITestCase):
         login_response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",
@@ -174,7 +258,7 @@ class AuthenticationAPITests(APITestCase):
         login_response = self.client.post(
             reverse("login"),
             {
-                "identifier": user.username,
+                "identifier": user.email,
                 "password": DEFAULT_PASSWORD,
             },
             format="json",

@@ -1,15 +1,25 @@
 from datetime import timedelta
+from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from apps.authentication.exceptions import (
     AuthenticationSessionNotFoundError,
+    GoogleAccountConflictError,
+    GoogleAccountHostedDomainError,
     InvalidCredentialsError,
     InvalidRefreshTokenError,
+    UnverifiedGoogleEmailError,
 )
-from apps.authentication.models import AuthenticationSession, AuthenticationTokens
+from apps.authentication.models import (
+    AuthenticationSession,
+    AuthenticationTokens,
+    SocialIdentity,
+    SocialIdentityProvider,
+)
 from apps.authentication.services import (
+    authenticate_google_user_service,
     authenticate_user_service,
     refresh_authentication_session_service,
     revoke_authentication_session_service,
@@ -17,6 +27,7 @@ from apps.authentication.services import (
 from tests.authentication.factories import (
     DEFAULT_PASSWORD,
     create_authentication_session,
+    create_social_identity,
     create_user,
 )
 
@@ -25,7 +36,7 @@ class AuthenticateUserServiceTests(TestCase):
     def test_authenticate_user_creates_session_and_returns_tokens(self):
         user = create_user(username="login-user")
 
-        tokens = authenticate_user_service(user.username, DEFAULT_PASSWORD)
+        tokens = authenticate_user_service(user.email, DEFAULT_PASSWORD)
 
         session = AuthenticationSession.objects.get(id=tokens.session_id)
         parsed_refresh_token = AuthenticationTokens.parse_refresh_token(
@@ -39,16 +50,116 @@ class AuthenticateUserServiceTests(TestCase):
         self.assertNotEqual(session.refresh_token_hash, parsed_refresh_token[1])
 
     def test_authenticate_user_rejects_invalid_credentials(self):
-        create_user(username="login-user")
+        create_user(username="login-user", email="login-user@example.com")
 
         with self.assertRaises(InvalidCredentialsError):
-            authenticate_user_service("login-user", "wrong-password")
+            authenticate_user_service("login-user@example.com", "wrong-password")
 
     def test_authenticate_user_rejects_inactive_user(self):
-        create_user(username="inactive-user", is_active=False)
+        user = create_user(username="inactive-user", is_active=False)
 
         with self.assertRaises(InvalidCredentialsError):
-            authenticate_user_service("inactive-user", DEFAULT_PASSWORD)
+            authenticate_user_service(user.email, DEFAULT_PASSWORD)
+
+
+@override_settings(GOOGLE_OAUTH_CLIENT_ID="google-client-id")
+class AuthenticateGoogleUserServiceTests(TestCase):
+    def test_authenticate_google_user_creates_user_identity_and_session(self):
+        claims = {
+            "sub": "google-subject-1",
+            "email": "Google.User@Example.com",
+            "email_verified": True,
+            "given_name": "Google",
+            "family_name": "User",
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            tokens = authenticate_google_user_service("credential")
+
+        session = AuthenticationSession.objects.get(id=tokens.session_id)
+        identity = SocialIdentity.objects.get(
+            provider=SocialIdentityProvider.GOOGLE,
+            provider_subject="google-subject-1",
+        )
+
+        self.assertEqual(session.user, identity.user)
+        self.assertTrue(session.is_active)
+        self.assertEqual(identity.email, "google.user@example.com")
+        self.assertTrue(identity.email_verified)
+        self.assertEqual(tokens.token_type, "Bearer")
+
+    def test_authenticate_google_user_reuses_existing_social_identity(self):
+        user = create_user(email="old@example.com")
+        create_social_identity(
+            user=user,
+            provider_subject="google-subject-2",
+            email="old@example.com",
+        )
+        claims = {
+            "sub": "google-subject-2",
+            "email": "new@example.com",
+            "email_verified": True,
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            tokens = authenticate_google_user_service("credential")
+
+        session = AuthenticationSession.objects.get(id=tokens.session_id)
+        identity = SocialIdentity.objects.get(provider_subject="google-subject-2")
+
+        self.assertEqual(session.user, user)
+        self.assertEqual(identity.email, "new@example.com")
+
+    def test_authenticate_google_user_rejects_existing_local_email(self):
+        create_user(email="existing@example.com")
+        claims = {
+            "sub": "google-subject-3",
+            "email": "existing@example.com",
+            "email_verified": True,
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            with self.assertRaises(GoogleAccountConflictError):
+                authenticate_google_user_service("credential")
+
+    def test_authenticate_google_user_rejects_unverified_email(self):
+        claims = {
+            "sub": "google-subject-4",
+            "email": "unverified@example.com",
+            "email_verified": False,
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            with self.assertRaises(UnverifiedGoogleEmailError):
+                authenticate_google_user_service("credential")
+
+    @override_settings(GOOGLE_ALLOWED_HOSTED_DOMAIN="example.com")
+    def test_authenticate_google_user_rejects_unallowed_hosted_domain(self):
+        claims = {
+            "sub": "google-subject-5",
+            "email": "user@other.example",
+            "email_verified": True,
+            "hd": "other.example",
+        }
+
+        with patch(
+            "apps.authentication.services.verify_google_id_token",
+            return_value=claims,
+        ):
+            with self.assertRaises(GoogleAccountHostedDomainError):
+                authenticate_google_user_service("credential")
 
 
 class RefreshAuthenticationSessionServiceTests(TestCase):

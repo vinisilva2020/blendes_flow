@@ -150,6 +150,196 @@ paths:
                 type: object
                 additionalProperties: {}
           description: ''
+  /api/v1/accounts/:
+    post:
+      operationId: v1_accounts_create
+      description: Register a local user account.
+      tags:
+      - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRegistrationInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountRegistrationInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountRegistrationInputSerializerV1'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/accounts/me/:
+    get:
+      operationId: v1_accounts_me_retrieve
+      description: Retrieve, update or soft-delete the authenticated user's own account.
+      tags:
+      - Accounts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_accounts_me_partial_update
+      description: Retrieve, update or soft-delete the authenticated user's own account.
+      tags:
+      - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAccountPartialInputSerializerV1'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_accounts_me_destroy
+      description: Retrieve, update or soft-delete the authenticated user's own account.
+      tags:
+      - Accounts
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: Account deactivated.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/authentication/google/:
+    post:
+      operationId: v1_authentication_google_create
+      description: Autentica usando a credencial do Google Identity Services.
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginInputSerializerV1'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
   /api/v1/authentication/login/:
     post:
       operationId: v1_authentication_login_create
@@ -538,6 +728,72 @@ components:
           readOnly: true
       required:
       - error
+    AccountOutputSerializerV1:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: Usuário
+          description: Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_
+            apenas.
+        email:
+          type: string
+          format: email
+          readOnly: true
+        avatar_type:
+          type: string
+          readOnly: true
+          nullable: true
+        is_active:
+          type: boolean
+          readOnly: true
+          title: Ativo
+          description: Indica que o usuário será tratado como ativo. Ao invés de excluir
+            contas de usuário, desmarque isso.
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de registro
+      required:
+      - avatar_type
+      - date_joined
+      - email
+      - id
+      - is_active
+      - username
+    AccountRegistrationInputSerializerV1:
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        password_confirm:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        avatar_type:
+          type: string
+          nullable: true
+          maxLength: 64
+      required:
+      - email
+      - password
+      - password_confirm
+      - username
     AuthenticationOutputSerializerV1:
       type: object
       description: Serializa os dados de autenticação para a resposta da API.
@@ -597,12 +853,22 @@ components:
       - created_at
       - id
       - is_current
+    GoogleLoginInputSerializerV1:
+      type: object
+      description: Valida a credencial de login emitida pelo Google Identity Services.
+      properties:
+        credential:
+          type: string
+          writeOnly: true
+      required:
+      - credential
     LoginInputSerializerV1:
       type: object
       description: Valida o identificador e a senha usados para autenticação.
       properties:
         identifier:
           type: string
+          format: email
           maxLength: 254
         password:
           type: string
@@ -649,6 +915,21 @@ components:
       - id
       - name
       - updated_at
+    PatchedAccountPartialInputSerializerV1:
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        avatar_type:
+          type: string
+          nullable: true
+          maxLength: 64
     PatchedOrganizationPartialInputSerializerV1:
       type: object
       properties:
