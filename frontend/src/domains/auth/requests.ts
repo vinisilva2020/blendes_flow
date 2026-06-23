@@ -3,6 +3,7 @@ import { request } from '@/lib/http/client'
 import type {
   AuthenticationSession,
   AuthenticationTokens,
+  GoogleLoginCredentials,
   LoginCredentials,
   RefreshTokenPayload,
 } from './contracts'
@@ -12,6 +13,14 @@ export function signIn(credentials: LoginCredentials) {
     data: credentials,
     method: 'POST',
     url: '/v1/authentication/login/',
+  })
+}
+
+export function signInWithGoogle(credentials: GoogleLoginCredentials) {
+  return request<AuthenticationTokens>({
+    data: credentials,
+    method: 'POST',
+    url: '/v1/authentication/google/',
   })
 }
 

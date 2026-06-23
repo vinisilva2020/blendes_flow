@@ -6,15 +6,15 @@ from apps.authentication.models import AuthenticationSession
 class LoginInputSerializerV1(serializers.Serializer):
     """Valida o identificador e a senha usados para autenticação."""
 
-    identifier = serializers.CharField(
-        max_length=254,
-        trim_whitespace=True,
-    )
+    identifier = serializers.EmailField(max_length=254)
     password = serializers.CharField(
         max_length=128,
         trim_whitespace=False,
         write_only=True,
     )
+
+    def validate_identifier(self, value):
+        return value.strip().lower()
 
 
 class RefreshTokenInputSerializerV1(serializers.Serializer):
@@ -22,6 +22,15 @@ class RefreshTokenInputSerializerV1(serializers.Serializer):
 
     refresh_token = serializers.CharField(
         max_length=256,
+        trim_whitespace=False,
+        write_only=True,
+    )
+
+
+class GoogleLoginInputSerializerV1(serializers.Serializer):
+    """Valida a credencial de login emitida pelo Google Identity Services."""
+
+    credential = serializers.CharField(
         trim_whitespace=False,
         write_only=True,
     )

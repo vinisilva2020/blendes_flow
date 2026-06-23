@@ -15,6 +15,52 @@ from rest_framework_simplejwt.tokens import AccessToken
 REFRESH_SECRET_BYTES = 48
 
 
+class SocialIdentityProvider(models.TextChoices):
+    """Provedores externos aceitos para autenticacao social."""
+
+    GOOGLE = "google", "Google"
+
+
+class SocialIdentity(models.Model):
+    """Vincula uma identidade externa a um usuario interno da aplicacao."""
+
+    provider = models.CharField(
+        max_length=32,
+        choices=SocialIdentityProvider.choices,
+    )
+    provider_subject = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="social_identities",
+    )
+    email = models.EmailField(blank=True)
+    email_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["provider", "provider_subject"],
+                name="unique_social_identity_provider_subject",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["user", "provider"],
+                name="social_identity_provider_idx",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            "SocialIdentity("
+            f"provider={self.provider}, user_id={self.user_id}"
+            ")"
+        )
+
+
 class AuthenticationSession(models.Model):
     """
     Representa uma sessão autenticada e revogável de um usuário.

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Blend } from '@lucide/vue'
 
 import heroImage from '@/assets/img/hero.png'
 import GoogleAuthButton from '@/components/GoogleButton.vue'
 import type { LoginCredentials } from '@/domains/auth/contracts'
-import { useSignInMutation } from '@/domains/auth/queries'
+import { useGoogleSignInMutation, useSignInMutation } from '@/domains/auth/queries'
 import { ApiRequestError } from '@/lib/http/errors'
 import { useAuthenticationStore } from '@/stores/authentication'
 
@@ -16,9 +16,11 @@ const router = useRouter()
 const route = useRoute()
 const authenticationStore = useAuthenticationStore()
 const signInMutation = useSignInMutation()
+const googleSignInMutation = useGoogleSignInMutation()
+const googleClientError = ref('')
 
 const errorMessage = computed(() => {
-  const error = signInMutation.error.value
+  const error = googleSignInMutation.error.value ?? signInMutation.error.value
 
   if (error instanceof ApiRequestError) {
     return error.message
@@ -28,10 +30,11 @@ const errorMessage = computed(() => {
     return 'Unable to sign in. Check your details and try again.'
   }
 
-  return ''
+  return googleClientError.value
 })
 
 async function submitSignIn(credentials: LoginCredentials) {
+  googleClientError.value = ''
   const tokens = await signInMutation.mutateAsync(credentials).catch(() => null)
 
   if (!tokens) {
@@ -40,6 +43,26 @@ async function submitSignIn(credentials: LoginCredentials) {
 
   authenticationStore.startSession(tokens)
   await router.push(getPostSignInLocation())
+}
+
+async function submitGoogleSignIn(credential: string) {
+  googleClientError.value = ''
+  const tokens = await googleSignInMutation
+    .mutateAsync({ credential })
+    .catch(() => null)
+
+  if (!tokens) {
+    return
+  }
+
+  authenticationStore.startSession(tokens)
+  await router.push(getPostSignInLocation())
+}
+
+function setGoogleClientError(message: string) {
+  googleSignInMutation.reset()
+  signInMutation.reset()
+  googleClientError.value = message
 }
 
 function getPostSignInLocation() {
@@ -136,7 +159,11 @@ function getPostSignInLocation() {
             </div>
 
             <div class="grid gap-3">
-              <GoogleAuthButton />
+              <GoogleAuthButton
+                :is-pending="googleSignInMutation.isPending.value"
+                @credential="submitGoogleSignIn"
+                @error="setGoogleClientError"
+              />
             </div>
 
             <div class="my-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-hidden="true">

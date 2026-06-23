@@ -7,32 +7,19 @@ from rest_framework.exceptions import (
     PermissionDenied,
     ValidationError,
 )
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from apps.authentication.exceptions import (
-    AuthenticationDomainError,
-    GoogleAccountConflictError,
-    GoogleAccountHostedDomainError,
-    GoogleAuthenticationNotConfiguredError,
-    InvalidGoogleCredentialError,
-    InvalidCredentialsError,
-    InvalidRefreshTokenError,
-    AuthenticationSessionNotFoundError,
-    UnverifiedGoogleEmailError,
+from apps.accounts.exceptions import (
+    AccountAlreadyExistsError,
+    AccountDomainError,
+    AccountInactiveError,
 )
 
 DOMAIN_ERROR_STATUS = {
-    InvalidCredentialsError: 401,
-    InvalidRefreshTokenError: 401,
-    AuthenticationSessionNotFoundError: 404,
-    GoogleAuthenticationNotConfiguredError: 503,
-    InvalidGoogleCredentialError: 401,
-    UnverifiedGoogleEmailError: 403,
-    GoogleAccountHostedDomainError: 403,
-    GoogleAccountConflictError: 409,
+    AccountAlreadyExistsError: 409,
+    AccountInactiveError: 409,
 }
-
 
 PUBLIC_API_EXCEPTION_MESSAGES = {
     "authentication_required": "Authentication credentials were not provided.",
@@ -42,12 +29,11 @@ PUBLIC_API_EXCEPTION_MESSAGES = {
 }
 
 
-class AuthenticationAPIView(APIView):
-    """Aplica o contrato estável de erros da API de autenticação."""
+class AccountAPIView(APIView):
+    """Apply the stable public error contract for account endpoints."""
 
     def handle_exception(self, exc):
-        """Converte exceções conhecidas para o formato público da API."""
-        if isinstance(exc, AuthenticationDomainError):
+        if isinstance(exc, AccountDomainError):
             return Response(
                 {
                     "error": {
@@ -101,7 +87,6 @@ class AuthenticationAPIView(APIView):
 
     @staticmethod
     def _api_exception_response(*, exc, code):
-        """Monta uma resposta para exceções HTTP preservando cabeçalhos."""
         headers = {}
         if getattr(exc, "auth_header", None):
             headers["WWW-Authenticate"] = exc.auth_header

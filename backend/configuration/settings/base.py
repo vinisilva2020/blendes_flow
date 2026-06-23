@@ -65,6 +65,9 @@ if not 60 <= AUTH_SESSION_LIFETIME_SECONDS <= 60 * 60 * 24 * 90:
         "AUTH_SESSION_LIFETIME_SECONDS must be between 60 and 7776000."
     )
 
+GOOGLE_OAUTH_CLIENT_ID = env("GOOGLE_OAUTH_CLIENT_ID", default="")
+GOOGLE_ALLOWED_HOSTED_DOMAIN = env("GOOGLE_ALLOWED_HOSTED_DOMAIN", default="")
+
 DEBUG = False
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
@@ -89,6 +92,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_filters",
+    "apps.accounts.apps.AccountsConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.organizations.apps.OrganizationsConfig",
     "drf_spectacular",
@@ -179,6 +183,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", default=str(BASE_DIR / "media"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = "accounts.User"
 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
@@ -194,7 +199,19 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
     "DEFAULT_THROTTLE_RATES": {
+        "anon": env(
+            "API_ANON_THROTTLE_RATE",
+            default="100/day",
+        ),
+        "user": env(
+            "API_USER_THROTTLE_RATE",
+            default="1000/day",
+        ),
         "auth_login": env(
             "AUTH_LOGIN_THROTTLE_RATE",
             default="5/minute",

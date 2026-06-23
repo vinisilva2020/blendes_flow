@@ -4,6 +4,7 @@ import {
   listAuthenticationSessions,
   revokeAuthenticationSession,
   signIn,
+  signInWithGoogle,
   signOut,
 } from './requests'
 
@@ -15,6 +16,12 @@ export const authenticationKeys = {
 export function useSignInMutation() {
   return useMutation({
     mutationFn: signIn,
+  })
+}
+
+export function useGoogleSignInMutation() {
+  return useMutation({
+    mutationFn: signInWithGoogle,
   })
 }
 
