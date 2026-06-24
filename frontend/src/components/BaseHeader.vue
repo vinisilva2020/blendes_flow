@@ -88,8 +88,6 @@ withDefaults(
   min-height: 68px;
   padding: 12px 28px;
   color: var(--header-ink);
-  background: rgb(255 255 255 / 88%);
-  border-bottom: 1px solid var(--header-line);
   backdrop-filter: blur(18px) saturate(132%);
 }
 
@@ -101,13 +99,6 @@ withDefaults(
   height: 1px;
   pointer-events: none;
   content: '';
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(52 203 191 / 26%),
-    rgb(18 33 36 / 8%),
-    transparent
-  );
 }
 
 .base-header-profile {
