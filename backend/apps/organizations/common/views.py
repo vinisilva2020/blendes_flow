@@ -15,18 +15,12 @@ from apps.organizations.exceptions import (
     OrganizationDomainError,
     OrganizationInactiveError,
     OrganizationNotFoundError,
-    UserAlreadyMemberOfOrganizationError,
-    UserNotAdminOfOrganizationError,
-    UserNotMemberOfOrganizationError,
 )
 
 DOMAIN_ERROR_STATUS = {
     OrganizationNotFoundError: 404,
-    UserNotMemberOfOrganizationError: 404,
-    UserNotAdminOfOrganizationError: 403,
     OrganizationInactiveError: 409,
     OrganizationAlreadyExistsError: 409,
-    UserAlreadyMemberOfOrganizationError: 409,
 }
 
 PUBLIC_API_EXCEPTION_MESSAGES = {

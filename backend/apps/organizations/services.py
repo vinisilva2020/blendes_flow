@@ -4,63 +4,56 @@ from django.db import transaction
 from apps.organizations.exceptions import (
     OrganizationAlreadyExistsError,
     OrganizationInactiveError,
-    UserNotAdminOfOrganizationError,
-    UserNotMemberOfOrganizationError,
+    OrganizationNotFoundError,
 )
-from apps.organizations.models import Organization, OrganizationMembership, Role
+from apps.organizations.models import Organization
 
 
 def list_user_organizations_service(user):
-    """List active organizations where the user is a member."""
+    """List active organizations created by the user."""
     return Organization.objects.filter(
-        memberships__user=user,
+        created_by=user,
         is_active=True,
     ).order_by("name")
 
 
-def _get_user_membership_with_organization(user, organization_id):
-    membership = (
-        OrganizationMembership.objects.select_related("organization")
-        .only(
-            "role",
-            "organization_id",
-            "organization__id",
-            "organization__name",
-            "organization__description",
-            "organization__is_active",
-            "organization__created_by",
-            "organization__created_at",
-            "organization__updated_at",
+def _get_user_owned_organization(user, organization_id):
+    organization = (
+        Organization.objects.only(
+            "id",
+            "name",
+            "description",
+            "is_active",
+            "created_by",
+            "created_at",
+            "updated_at",
         )
-        .filter(user=user, organization_id=organization_id)
+        .filter(created_by=user, id=organization_id)
         .first()
     )
 
-    if membership is None:
-        raise UserNotMemberOfOrganizationError
+    if organization is None:
+        raise OrganizationNotFoundError
 
-    if not membership.organization.is_active:
+    if not organization.is_active:
         raise OrganizationInactiveError
 
-    return membership
+    return organization
 
 
 def get_user_organization_service(user, organization_id):
-    """Get an active organization when the user is a member."""
-    membership = _get_user_membership_with_organization(
+    """Get an active organization created by the user."""
+    return _get_user_owned_organization(
         user=user,
         organization_id=organization_id,
     )
-    organization = membership.organization
-    organization._current_user_membership_role = membership.role
-    return organization
 
 
 @transaction.atomic
 def create_organization_service(user, name: str, description=""):
-    """Create an organization and make the user its owner."""
+    """Create an organization owned by the authenticated user."""
     try:
-        org = Organization.objects.create(
+        return Organization.objects.create(
             name=name,
             description=description,
             created_by=user,
@@ -68,27 +61,14 @@ def create_organization_service(user, name: str, description=""):
     except IntegrityError:
         raise OrganizationAlreadyExistsError
 
-    OrganizationMembership.objects.create(
-        user=user,
-        organization=org,
-        role=Role.OWNER,
-    )
-
-    return org
-
 
 @transaction.atomic
 def update_organization_service(user, organization_id, name=None, description=None):
-    """Update an organization when the user can manage it."""
-    membership = _get_user_membership_with_organization(
+    """Update an organization created by the user."""
+    organization = _get_user_owned_organization(
         user=user,
         organization_id=organization_id,
     )
-
-    if not membership.can_manage:
-        raise UserNotAdminOfOrganizationError
-
-    organization = membership.organization
     update_fields = []
 
     if name is not None:
@@ -114,13 +94,9 @@ def update_organization_service(user, organization_id, name=None, description=No
 
 @transaction.atomic
 def delete_organization_service(user, organization_id):
-    """Delete an organization when the user can manage it."""
-    membership = _get_user_membership_with_organization(
+    """Delete an organization created by the user."""
+    organization = _get_user_owned_organization(
         user=user,
         organization_id=organization_id,
     )
-
-    if not membership.can_manage:
-        raise UserNotAdminOfOrganizationError
-
-    membership.organization.delete()
+    organization.delete()

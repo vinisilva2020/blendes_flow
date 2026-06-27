@@ -67,16 +67,6 @@ const router = createRouter({
           },
         },
         {
-          path: 'members',
-          name: 'dashboard-members',
-          component: () => import('../views/dashboard/Members.vue'),
-          meta: {
-            headerAvatarLabel: 'MB',
-            headerSubtitle: 'Manage collaborators, roles, and access across the workspace.',
-            headerTitle: 'Members',
-          },
-        },
-        {
           path: 'workflows',
           name: 'dashboard-workflows',
           component: () => import('../views/dashboard/Workflows.vue'),

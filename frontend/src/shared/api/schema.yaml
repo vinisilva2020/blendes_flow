@@ -497,6 +497,240 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
+  /api/v1/blaves/:
+    get:
+      operationId: v1_blaves_list
+      description: Lista e cadastra blaves no contexto da organização selecionada.
+      parameters:
+      - in: query
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Blaves
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_blaves_create
+      description: Lista e cadastra blaves no contexto da organização selecionada.
+      tags:
+      - Blaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/blaves/{blave_id}/:
+    get:
+      operationId: v1_blaves_retrieve
+      description: Consulta e altera uma blave no contexto da organização selecionada.
+      parameters:
+      - in: path
+        name: blave_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Blaves
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_blaves_partial_update
+      description: Consulta e altera uma blave no contexto da organização selecionada.
+      parameters:
+      - in: path
+        name: blave_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Blaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBlavePartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBlavePartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBlavePartialInputSerializerV1'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_blaves_destroy
+      description: Consulta e altera uma blave no contexto da organização selecionada.
+      parameters:
+      - in: path
+        name: blave_id
+        schema:
+          type: integer
+        required: true
+      - in: query
+        name: organization_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Blaves
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: Blave excluída.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
   /api/v1/organizations/:
     get:
       operationId: v1_organizations_list
@@ -853,6 +1087,117 @@ components:
       - created_at
       - id
       - is_current
+    BlaveInputSerializerV1:
+      type: object
+      description: Valida os dados necessários para cadastrar uma blave.
+      properties:
+        organization_id:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+      - organization_id
+      - title
+    BlaveMovementStatusOutputSerializerV1:
+      type: object
+      description: Serializa o status dos movimentos associados a uma blave.
+      properties:
+        movement:
+          $ref: '#/components/schemas/MovementEnum'
+        status:
+          $ref: '#/components/schemas/BlaveMovementStatusOutputSerializerV1StatusEnum'
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - movement
+    BlaveMovementStatusOutputSerializerV1StatusEnum:
+      enum:
+      - LOCKED
+      - ACTIVE
+      - COMPLETED
+      - INVALIDATED
+      type: string
+      description: |-
+        * `LOCKED` - Bloqueado
+        * `ACTIVE` - Ativo
+        * `COMPLETED` - Concluido
+        * `INVALIDATED` - Invalidado
+    BlaveOutputSerializerV1:
+      type: object
+      description: Serializa uma blave para consumo da API.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        organization_id:
+          type: integer
+          readOnly: true
+        created_by_user_id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/StatusCe5Enum'
+        current_movement:
+          $ref: '#/components/schemas/CurrentMovementEnum'
+        version_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        movement_statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlaveMovementStatusOutputSerializerV1'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by_user_id
+      - description
+      - id
+      - movement_statuses
+      - organization_id
+      - title
+      - updated_at
+    CurrentMovementEnum:
+      enum:
+      - BOUNDGROUND
+      - LABOR
+      - ECHO
+      - NOISECATCH
+      - DRAWBRIDGE
+      - ENHANCE
+      - SIGHTLINE
+      type: string
+      description: |-
+        * `BOUNDGROUND` - Boundground
+        * `LABOR` - Labor
+        * `ECHO` - Echo
+        * `NOISECATCH` - Noisecatch
+        * `DRAWBRIDGE` - Drawbridge
+        * `ENHANCE` - Enhance
+        * `SIGHTLINE` - Sightline
     GoogleLoginInputSerializerV1:
       type: object
       description: Valida a credencial de login emitida pelo Google Identity Services.
@@ -877,6 +1222,24 @@ components:
       required:
       - identifier
       - password
+    MovementEnum:
+      enum:
+      - BOUNDGROUND
+      - LABOR
+      - ECHO
+      - NOISECATCH
+      - DRAWBRIDGE
+      - ENHANCE
+      - SIGHTLINE
+      type: string
+      description: |-
+        * `BOUNDGROUND` - Boundground
+        * `LABOR` - Labor
+        * `ECHO` - Echo
+        * `NOISECATCH` - Noisecatch
+        * `DRAWBRIDGE` - Drawbridge
+        * `ENHANCE` - Enhance
+        * `SIGHTLINE` - Sightline
     OrganizationInputSerializerV1:
       type: object
       properties:
@@ -930,6 +1293,21 @@ components:
           type: string
           nullable: true
           maxLength: 64
+    PatchedBlavePartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos para alterar uma blave.
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        status:
+          $ref: '#/components/schemas/StatusCe5Enum'
+        current_movement:
+          $ref: '#/components/schemas/CurrentMovementEnum'
     PatchedOrganizationPartialInputSerializerV1:
       type: object
       properties:
@@ -949,6 +1327,18 @@ components:
           maxLength: 256
       required:
       - refresh_token
+    StatusCe5Enum:
+      enum:
+      - DRAFT
+      - IN_PROGRESS
+      - COMPLETED
+      - ARCHIVED
+      type: string
+      description: |-
+        * `DRAFT` - Rascunho
+        * `IN_PROGRESS` - Em andamento
+        * `COMPLETED` - Concluida
+        * `ARCHIVED` - Arquivada
   securitySchemes:
     bearerAuth:
       type: http

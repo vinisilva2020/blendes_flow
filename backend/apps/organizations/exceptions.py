@@ -15,27 +15,6 @@ class OrganizationNotFoundError(OrganizationDomainError):
     message = "Organization not found"
 
 
-class UserNotMemberOfOrganizationError(OrganizationDomainError):
-    """Exceção para usuário que não é membro da organização."""
-
-    code = "user_not_member_of_organization"
-    message = "User is not a member of the organization"
-
-
-class UserAlreadyMemberOfOrganizationError(OrganizationDomainError):
-    """Exceção para usuário que já é membro da organização."""
-
-    code = "user_already_member_of_organization"
-    message = "User is already a member of the organization"
-
-
-class UserNotAdminOfOrganizationError(OrganizationDomainError):
-    """Exceção para usuário que não é admin da organização."""
-
-    code = "user_not_admin_of_organization"
-    message = "User is not an admin of the organization"
-
-
 class OrganizationInactiveError(OrganizationDomainError):
     """Exceção para organização inativa."""
 

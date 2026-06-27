@@ -4,997 +4,1483 @@
  */
 
 export interface paths {
-    "/api/schema/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
-         *
-         *     - YAML: application/vnd.oai.openapi
-         *     - JSON: application/vnd.oai.openapi+json
-         */
-        get: operations["schema_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/accounts/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Register a local user account. */
-        post: operations["v1_accounts_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/accounts/me/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
-        get: operations["v1_accounts_me_retrieve"];
-        put?: never;
-        post?: never;
-        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
-        delete: operations["v1_accounts_me_destroy"];
-        options?: never;
-        head?: never;
-        /** @description Retrieve, update or soft-delete the authenticated user's own account. */
-        patch: operations["v1_accounts_me_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/authentication/google/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Autentica usando a credencial do Google Identity Services. */
-        post: operations["v1_authentication_google_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/authentication/login/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Autentica um usuário e retorna os tokens de acesso e refresh. */
-        post: operations["v1_authentication_login_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/authentication/logout/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Revoga a sessão de autenticação atual do usuário. */
-        post: operations["v1_authentication_logout_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/authentication/refresh/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Renova os tokens de acesso e refresh usando um token de refresh válido. */
-        post: operations["v1_authentication_refresh_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/authentication/sessions/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retorna as sessões de autenticação ativas do usuário. */
-        get: operations["v1_authentication_sessions_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/authentication/sessions/{session_id}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** @description Revoga a sessão de autenticação especificada pelo ID. */
-        delete: operations["v1_authentication_sessions_destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/organizations/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description List and create organizations for the authenticated user. */
-        get: operations["v1_organizations_list"];
-        put?: never;
-        /** @description List and create organizations for the authenticated user. */
-        post: operations["v1_organizations_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/organizations/{organization_id}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description Retrieve, update and delete one organization for the authenticated user. */
-        get: operations["v1_organizations_retrieve"];
-        put?: never;
-        post?: never;
-        /** @description Retrieve, update and delete one organization for the authenticated user. */
-        delete: operations["v1_organizations_destroy"];
-        options?: never;
-        head?: never;
-        /** @description Retrieve, update and delete one organization for the authenticated user. */
-        patch: operations["v1_organizations_partial_update"];
-        trace?: never;
-    };
+  '/api/schema/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
+     *
+     *     - YAML: application/vnd.oai.openapi
+     *     - JSON: application/vnd.oai.openapi+json
+     */
+    get: operations['schema_retrieve']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/accounts/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** @description Register a local user account. */
+    post: operations['v1_accounts_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/accounts/me/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+    get: operations['v1_accounts_me_retrieve']
+    put?: never
+    post?: never
+    /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+    delete: operations['v1_accounts_me_destroy']
+    options?: never
+    head?: never
+    /** @description Retrieve, update or soft-delete the authenticated user's own account. */
+    patch: operations['v1_accounts_me_partial_update']
+    trace?: never
+  }
+  '/api/v1/authentication/google/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** @description Autentica usando a credencial do Google Identity Services. */
+    post: operations['v1_authentication_google_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/authentication/login/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** @description Autentica um usuário e retorna os tokens de acesso e refresh. */
+    post: operations['v1_authentication_login_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/authentication/logout/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** @description Revoga a sessão de autenticação atual do usuário. */
+    post: operations['v1_authentication_logout_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/authentication/refresh/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** @description Renova os tokens de acesso e refresh usando um token de refresh válido. */
+    post: operations['v1_authentication_refresh_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/authentication/sessions/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description Retorna as sessões de autenticação ativas do usuário. */
+    get: operations['v1_authentication_sessions_list']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/authentication/sessions/{session_id}/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** @description Revoga a sessão de autenticação especificada pelo ID. */
+    delete: operations['v1_authentication_sessions_destroy']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/blaves/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description Lista e cadastra blaves no contexto da organização selecionada. */
+    get: operations['v1_blaves_list']
+    put?: never
+    /** @description Lista e cadastra blaves no contexto da organização selecionada. */
+    post: operations['v1_blaves_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/blaves/{blave_id}/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+    get: operations['v1_blaves_retrieve']
+    put?: never
+    post?: never
+    /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+    delete: operations['v1_blaves_destroy']
+    options?: never
+    head?: never
+    /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+    patch: operations['v1_blaves_partial_update']
+    trace?: never
+  }
+  '/api/v1/organizations/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description List and create organizations for the authenticated user. */
+    get: operations['v1_organizations_list']
+    put?: never
+    /** @description List and create organizations for the authenticated user. */
+    post: operations['v1_organizations_create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/organizations/{organization_id}/': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description Retrieve, update and delete one organization for the authenticated user. */
+    get: operations['v1_organizations_retrieve']
+    put?: never
+    post?: never
+    /** @description Retrieve, update and delete one organization for the authenticated user. */
+    delete: operations['v1_organizations_destroy']
+    options?: never
+    head?: never
+    /** @description Retrieve, update and delete one organization for the authenticated user. */
+    patch: operations['v1_organizations_partial_update']
+    trace?: never
+  }
 }
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 export interface components {
-    schemas: {
-        APIErrorBodySerializerV1: {
-            readonly code: string;
-            readonly message: string;
-            readonly details: unknown;
-        };
-        APIErrorSerializerV1: {
-            readonly error: components["schemas"]["APIErrorBodySerializerV1"];
-        };
-        AccountOutputSerializerV1: {
-            readonly id: number;
-            /**
-             * Usuário
-             * @description Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
-             */
-            readonly username: string;
-            /** Format: email */
-            readonly email: string;
-            readonly avatar_type: string | null;
-            /**
-             * Ativo
-             * @description Indica que o usuário será tratado como ativo. Ao invés de excluir contas de usuário, desmarque isso.
-             */
-            readonly is_active: boolean;
-            /**
-             * Data de registro
-             * Format: date-time
-             */
-            readonly date_joined: string;
-        };
-        AccountRegistrationInputSerializerV1: {
-            username: string;
-            /** Format: email */
-            email: string;
-            password: string;
-            password_confirm: string;
-            avatar_type?: string | null;
-        };
-        /** @description Serializa os dados de autenticação para a resposta da API. */
-        AuthenticationOutputSerializerV1: {
-            readonly access_token: string;
-            readonly refresh_token: string;
-            readonly token_type: string;
-            readonly access_expires_in: number;
-            /** Format: date-time */
-            readonly refresh_expires_at: string;
-            /** Format: uuid */
-            readonly session_id: string;
-        };
-        /** @description Serializa os dados de uma sessão de autenticação ativa. */
-        AuthenticationSessionOutputSerializerV1: {
-            /** Format: uuid */
-            readonly id: string;
-            /** @description Indica se esta sessão é a sessão atual do usuário. */
-            readonly is_current: boolean;
-            /** Format: date-time */
-            last_used_at?: string | null;
-            /** Format: date-time */
-            readonly created_at: string;
-            /** Format: date-time */
-            expires_at?: string | null;
-        };
-        /** @description Valida a credencial de login emitida pelo Google Identity Services. */
-        GoogleLoginInputSerializerV1: {
-            credential: string;
-        };
-        /** @description Valida o identificador e a senha usados para autenticação. */
-        LoginInputSerializerV1: {
-            /** Format: email */
-            identifier: string;
-            password: string;
-        };
-        OrganizationInputSerializerV1: {
-            name: string;
-            description?: string | null;
-        };
-        OrganizationOutputSerializerV1: {
-            readonly id: number;
-            name: string;
-            description?: string | null;
-            is_active?: boolean;
-            /** Format: date-time */
-            readonly created_at: string;
-            /** Format: date-time */
-            readonly updated_at: string;
-        };
-        PatchedAccountPartialInputSerializerV1: {
-            username?: string;
-            /** Format: email */
-            email?: string;
-            avatar_type?: string | null;
-        };
-        PatchedOrganizationPartialInputSerializerV1: {
-            name?: string;
-            description?: string | null;
-        };
-        /** @description Valida o token de refresh usado para obter um novo access token. */
-        RefreshTokenInputSerializerV1: {
-            refresh_token: string;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+  schemas: {
+    APIErrorBodySerializerV1: {
+      readonly code: string
+      readonly message: string
+      readonly details: unknown
+    }
+    APIErrorSerializerV1: {
+      readonly error: components['schemas']['APIErrorBodySerializerV1']
+    }
+    AccountOutputSerializerV1: {
+      readonly id: number
+      /**
+       * Usuário
+       * @description Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
+       */
+      readonly username: string
+      /** Format: email */
+      readonly email: string
+      readonly avatar_type: string | null
+      /**
+       * Ativo
+       * @description Indica que o usuário será tratado como ativo. Ao invés de excluir contas de usuário, desmarque isso.
+       */
+      readonly is_active: boolean
+      /**
+       * Data de registro
+       * Format: date-time
+       */
+      readonly date_joined: string
+    }
+    AccountRegistrationInputSerializerV1: {
+      username: string
+      /** Format: email */
+      email: string
+      password: string
+      password_confirm: string
+      avatar_type?: string | null
+    }
+    /** @description Serializa os dados de autenticação para a resposta da API. */
+    AuthenticationOutputSerializerV1: {
+      readonly access_token: string
+      readonly refresh_token: string
+      readonly token_type: string
+      readonly access_expires_in: number
+      /** Format: date-time */
+      readonly refresh_expires_at: string
+      /** Format: uuid */
+      readonly session_id: string
+    }
+    /** @description Serializa os dados de uma sessão de autenticação ativa. */
+    AuthenticationSessionOutputSerializerV1: {
+      /** Format: uuid */
+      readonly id: string
+      /** @description Indica se esta sessão é a sessão atual do usuário. */
+      readonly is_current: boolean
+      /** Format: date-time */
+      last_used_at?: string | null
+      /** Format: date-time */
+      readonly created_at: string
+      /** Format: date-time */
+      expires_at?: string | null
+    }
+    /** @description Valida os dados necessários para cadastrar uma blave. */
+    BlaveInputSerializerV1: {
+      organization_id: number
+      title: string
+      description?: string | null
+    }
+    /** @description Serializa o status dos movimentos associados a uma blave. */
+    BlaveMovementStatusOutputSerializerV1: {
+      movement: components['schemas']['MovementEnum']
+      status?: components['schemas']['BlaveMovementStatusOutputSerializerV1StatusEnum']
+      /** Format: date-time */
+      completed_at?: string | null
+    }
+    /**
+     * @description * `LOCKED` - Bloqueado
+     *     * `ACTIVE` - Ativo
+     *     * `COMPLETED` - Concluido
+     *     * `INVALIDATED` - Invalidado
+     * @enum {string}
+     */
+    BlaveMovementStatusOutputSerializerV1StatusEnum:
+      | 'LOCKED'
+      | 'ACTIVE'
+      | 'COMPLETED'
+      | 'INVALIDATED'
+    /** @description Serializa uma blave para consumo da API. */
+    BlaveOutputSerializerV1: {
+      readonly id: number
+      readonly organization_id: number
+      readonly created_by_user_id: number
+      title: string
+      description: string
+      status?: components['schemas']['StatusCe5Enum']
+      current_movement?: components['schemas']['CurrentMovementEnum']
+      /** Format: int64 */
+      version_number?: number
+      readonly movement_statuses: components['schemas']['BlaveMovementStatusOutputSerializerV1'][]
+      /** Format: date-time */
+      readonly created_at: string
+      /** Format: date-time */
+      readonly updated_at: string
+    }
+    /**
+     * @description * `BOUNDGROUND` - Boundground
+     *     * `LABOR` - Labor
+     *     * `ECHO` - Echo
+     *     * `NOISECATCH` - Noisecatch
+     *     * `DRAWBRIDGE` - Drawbridge
+     *     * `ENHANCE` - Enhance
+     *     * `SIGHTLINE` - Sightline
+     * @enum {string}
+     */
+    CurrentMovementEnum:
+      | 'BOUNDGROUND'
+      | 'LABOR'
+      | 'ECHO'
+      | 'NOISECATCH'
+      | 'DRAWBRIDGE'
+      | 'ENHANCE'
+      | 'SIGHTLINE'
+    /** @description Valida a credencial de login emitida pelo Google Identity Services. */
+    GoogleLoginInputSerializerV1: {
+      credential: string
+    }
+    /** @description Valida o identificador e a senha usados para autenticação. */
+    LoginInputSerializerV1: {
+      /** Format: email */
+      identifier: string
+      password: string
+    }
+    /**
+     * @description * `BOUNDGROUND` - Boundground
+     *     * `LABOR` - Labor
+     *     * `ECHO` - Echo
+     *     * `NOISECATCH` - Noisecatch
+     *     * `DRAWBRIDGE` - Drawbridge
+     *     * `ENHANCE` - Enhance
+     *     * `SIGHTLINE` - Sightline
+     * @enum {string}
+     */
+    MovementEnum:
+      | 'BOUNDGROUND'
+      | 'LABOR'
+      | 'ECHO'
+      | 'NOISECATCH'
+      | 'DRAWBRIDGE'
+      | 'ENHANCE'
+      | 'SIGHTLINE'
+    OrganizationInputSerializerV1: {
+      name: string
+      description?: string | null
+    }
+    OrganizationOutputSerializerV1: {
+      readonly id: number
+      name: string
+      description?: string | null
+      is_active?: boolean
+      /** Format: date-time */
+      readonly created_at: string
+      /** Format: date-time */
+      readonly updated_at: string
+    }
+    PatchedAccountPartialInputSerializerV1: {
+      username?: string
+      /** Format: email */
+      email?: string
+      avatar_type?: string | null
+    }
+    /** @description Valida os dados permitidos para alterar uma blave. */
+    PatchedBlavePartialInputSerializerV1: {
+      title?: string
+      description?: string | null
+      status?: components['schemas']['StatusCe5Enum']
+      current_movement?: components['schemas']['CurrentMovementEnum']
+    }
+    PatchedOrganizationPartialInputSerializerV1: {
+      name?: string
+      description?: string | null
+    }
+    /** @description Valida o token de refresh usado para obter um novo access token. */
+    RefreshTokenInputSerializerV1: {
+      refresh_token: string
+    }
+    /**
+     * @description * `DRAFT` - Rascunho
+     *     * `IN_PROGRESS` - Em andamento
+     *     * `COMPLETED` - Concluida
+     *     * `ARCHIVED` - Arquivada
+     * @enum {string}
+     */
+    StatusCe5Enum: 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED'
+  }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
-export type $defs = Record<string, never>;
+export type $defs = Record<string, never>
 export interface operations {
-    schema_retrieve: {
-        parameters: {
-            query?: {
-                format?: "json" | "yaml";
-                lang?: "af" | "ar" | "ar-dz" | "ast" | "az" | "be" | "bg" | "bn" | "br" | "bs" | "ca" | "ckb" | "cs" | "cy" | "da" | "de" | "dsb" | "el" | "en" | "en-au" | "en-gb" | "eo" | "es" | "es-ar" | "es-co" | "es-mx" | "es-ni" | "es-ve" | "et" | "eu" | "fa" | "fi" | "fr" | "fy" | "ga" | "gd" | "gl" | "he" | "hi" | "hr" | "hsb" | "ht" | "hu" | "hy" | "ia" | "id" | "ig" | "io" | "is" | "it" | "ja" | "ka" | "kab" | "kk" | "km" | "kn" | "ko" | "ky" | "lb" | "lt" | "lv" | "mk" | "ml" | "mn" | "mr" | "ms" | "my" | "nb" | "ne" | "nl" | "nn" | "os" | "pa" | "pl" | "pt" | "pt-br" | "ro" | "ru" | "sk" | "sl" | "sq" | "sr" | "sr-latn" | "sv" | "sw" | "ta" | "te" | "tg" | "th" | "tk" | "tr" | "tt" | "udm" | "ug" | "uk" | "ur" | "uz" | "vi" | "zh-hans" | "zh-hant";
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/vnd.oai.openapi": {
-                        [key: string]: unknown;
-                    };
-                    "application/yaml": {
-                        [key: string]: unknown;
-                    };
-                    "application/vnd.oai.openapi+json": {
-                        [key: string]: unknown;
-                    };
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-        };
-    };
-    v1_accounts_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AccountRegistrationInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["AccountRegistrationInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["AccountRegistrationInputSerializerV1"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_accounts_me_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_accounts_me_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Account deactivated. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_accounts_me_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["PatchedAccountPartialInputSerializerV1"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_google_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GoogleLoginInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["GoogleLoginInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["GoogleLoginInputSerializerV1"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthenticationOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_login_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["LoginInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["LoginInputSerializerV1"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthenticationOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_logout_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Authentication session revoked. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_refresh_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefreshTokenInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["RefreshTokenInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["RefreshTokenInputSerializerV1"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthenticationOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_sessions_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthenticationSessionOutputSerializerV1"][];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_authentication_sessions_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Authentication session revoked. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_organizations_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationOutputSerializerV1"][];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_organizations_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrganizationInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["OrganizationInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["OrganizationInputSerializerV1"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_organizations_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationOutputSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_organizations_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Organization deleted. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
-    v1_organizations_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                organization_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedOrganizationPartialInputSerializerV1"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedOrganizationPartialInputSerializerV1"];
-                "multipart/form-data": components["schemas"]["PatchedOrganizationPartialInputSerializerV1"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationOutputSerializerV1"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["APIErrorSerializerV1"];
-                };
-            };
-        };
-    };
+  schema_retrieve: {
+    parameters: {
+      query?: {
+        format?: 'json' | 'yaml'
+        lang?:
+          | 'af'
+          | 'ar'
+          | 'ar-dz'
+          | 'ast'
+          | 'az'
+          | 'be'
+          | 'bg'
+          | 'bn'
+          | 'br'
+          | 'bs'
+          | 'ca'
+          | 'ckb'
+          | 'cs'
+          | 'cy'
+          | 'da'
+          | 'de'
+          | 'dsb'
+          | 'el'
+          | 'en'
+          | 'en-au'
+          | 'en-gb'
+          | 'eo'
+          | 'es'
+          | 'es-ar'
+          | 'es-co'
+          | 'es-mx'
+          | 'es-ni'
+          | 'es-ve'
+          | 'et'
+          | 'eu'
+          | 'fa'
+          | 'fi'
+          | 'fr'
+          | 'fy'
+          | 'ga'
+          | 'gd'
+          | 'gl'
+          | 'he'
+          | 'hi'
+          | 'hr'
+          | 'hsb'
+          | 'ht'
+          | 'hu'
+          | 'hy'
+          | 'ia'
+          | 'id'
+          | 'ig'
+          | 'io'
+          | 'is'
+          | 'it'
+          | 'ja'
+          | 'ka'
+          | 'kab'
+          | 'kk'
+          | 'km'
+          | 'kn'
+          | 'ko'
+          | 'ky'
+          | 'lb'
+          | 'lt'
+          | 'lv'
+          | 'mk'
+          | 'ml'
+          | 'mn'
+          | 'mr'
+          | 'ms'
+          | 'my'
+          | 'nb'
+          | 'ne'
+          | 'nl'
+          | 'nn'
+          | 'os'
+          | 'pa'
+          | 'pl'
+          | 'pt'
+          | 'pt-br'
+          | 'ro'
+          | 'ru'
+          | 'sk'
+          | 'sl'
+          | 'sq'
+          | 'sr'
+          | 'sr-latn'
+          | 'sv'
+          | 'sw'
+          | 'ta'
+          | 'te'
+          | 'tg'
+          | 'th'
+          | 'tk'
+          | 'tr'
+          | 'tt'
+          | 'udm'
+          | 'ug'
+          | 'uk'
+          | 'ur'
+          | 'uz'
+          | 'vi'
+          | 'zh-hans'
+          | 'zh-hant'
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/vnd.oai.openapi': {
+            [key: string]: unknown
+          }
+          'application/yaml': {
+            [key: string]: unknown
+          }
+          'application/vnd.oai.openapi+json': {
+            [key: string]: unknown
+          }
+          'application/json': {
+            [key: string]: unknown
+          }
+        }
+      }
+    }
+  }
+  v1_accounts_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AccountRegistrationInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['AccountRegistrationInputSerializerV1']
+        'multipart/form-data': components['schemas']['AccountRegistrationInputSerializerV1']
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AccountOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_accounts_me_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AccountOutputSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_accounts_me_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Account deactivated. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_accounts_me_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedAccountPartialInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['PatchedAccountPartialInputSerializerV1']
+        'multipart/form-data': components['schemas']['PatchedAccountPartialInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AccountOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_google_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GoogleLoginInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['GoogleLoginInputSerializerV1']
+        'multipart/form-data': components['schemas']['GoogleLoginInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AuthenticationOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      503: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_login_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['LoginInputSerializerV1']
+        'multipart/form-data': components['schemas']['LoginInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AuthenticationOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_logout_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Authentication session revoked. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_refresh_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RefreshTokenInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['RefreshTokenInputSerializerV1']
+        'multipart/form-data': components['schemas']['RefreshTokenInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AuthenticationOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_sessions_list: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AuthenticationSessionOutputSerializerV1'][]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_authentication_sessions_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        session_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Authentication session revoked. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_blaves_list: {
+    parameters: {
+      query: {
+        organization_id: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BlaveOutputSerializerV1'][]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_blaves_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BlaveInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['BlaveInputSerializerV1']
+        'multipart/form-data': components['schemas']['BlaveInputSerializerV1']
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BlaveOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_blaves_retrieve: {
+    parameters: {
+      query: {
+        organization_id: number
+      }
+      header?: never
+      path: {
+        blave_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BlaveOutputSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_blaves_destroy: {
+    parameters: {
+      query: {
+        organization_id: number
+      }
+      header?: never
+      path: {
+        blave_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Blave excluída. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_blaves_partial_update: {
+    parameters: {
+      query: {
+        organization_id: number
+      }
+      header?: never
+      path: {
+        blave_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedBlavePartialInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['PatchedBlavePartialInputSerializerV1']
+        'multipart/form-data': components['schemas']['PatchedBlavePartialInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BlaveOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_organizations_list: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OrganizationOutputSerializerV1'][]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_organizations_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OrganizationInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['OrganizationInputSerializerV1']
+        'multipart/form-data': components['schemas']['OrganizationInputSerializerV1']
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OrganizationOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_organizations_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        organization_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OrganizationOutputSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_organizations_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        organization_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Organization deleted. */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
+  v1_organizations_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        organization_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['PatchedOrganizationPartialInputSerializerV1']
+        'application/x-www-form-urlencoded': components['schemas']['PatchedOrganizationPartialInputSerializerV1']
+        'multipart/form-data': components['schemas']['PatchedOrganizationPartialInputSerializerV1']
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OrganizationOutputSerializerV1']
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['APIErrorSerializerV1']
+        }
+      }
+    }
+  }
 }

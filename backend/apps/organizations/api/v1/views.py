@@ -10,7 +10,7 @@ from apps.organizations.api.v1.serializers import (
     OrganizationPartialInputSerializerV1,
 )
 from apps.organizations.common.views import OrganizationAPIView
-from apps.organizations.permissions import IsOrganizationMemberReadOnlyOrAdminOwnerWrite
+from apps.organizations.permissions import IsOrganizationOwner
 from apps.organizations.services import (
     create_organization_service,
     delete_organization_service,
@@ -65,7 +65,7 @@ class OrganizationDetailAPIViewV1(OrganizationAPIView):
 
     permission_classes = [
         IsAuthenticated,
-        IsOrganizationMemberReadOnlyOrAdminOwnerWrite,
+        IsOrganizationOwner,
     ]
 
     @extend_schema(
