@@ -1,13 +1,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.organizations.models import Organization, OrganizationMembership, Role
+from apps.organizations.models import Organization
 from tests.authentication.factories import create_user, issue_access_token_for_user
-from tests.organizations.factories import (
-    create_membership,
-    create_organization,
-    create_organization_with_membership,
-)
+from tests.organizations.factories import create_organization
 
 
 ORGANIZATION_LIST_URL = "/api/v1/organizations/"
@@ -31,20 +27,17 @@ class OrganizationsAPITests(APITestCase):
     def test_list_returns_only_current_user_active_organizations(self):
         user = create_user(username="api-list-user")
         other_user = create_user(username="api-list-other")
-        active_org, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
+        active_org = create_organization(
+            created_by=user,
             name="Active Org",
         )
-        create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
+        create_organization(
+            created_by=user,
             name="Inactive Org",
             is_active=False,
         )
-        create_organization_with_membership(
-            user=other_user,
-            role=Role.MEMBER,
+        create_organization(
+            created_by=other_user,
             name="Other Org",
         )
 
@@ -56,7 +49,7 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.data[0]["id"], active_org.id)
         self.assertEqual(response.data[0]["name"], "Active Org")
 
-    def test_create_organization_creates_owner_membership(self):
+    def test_create_organization_sets_current_user_as_owner(self):
         user = create_user(username="api-create-user")
         self.authenticate(user)
 
@@ -72,13 +65,6 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         organization = Organization.objects.get(id=response.data["id"])
         self.assertEqual(organization.created_by, user)
-        self.assertTrue(
-            OrganizationMembership.objects.filter(
-                user=user,
-                organization=organization,
-                role=Role.OWNER,
-            ).exists()
-        )
 
     def test_create_duplicate_organization_returns_conflict(self):
         user = create_user(username="api-create-duplicate")
@@ -94,12 +80,9 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
         self.assertEqual(response.data["error"]["code"], "organization_already_exists")
 
-    def test_retrieve_organization_for_member(self):
-        user = create_user(username="api-detail-member")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
-        )
+    def test_retrieve_organization_for_owner(self):
+        user = create_user(username="api-detail-owner")
+        organization = create_organization(created_by=user)
         self.authenticate(user)
 
         response = self.client.get(
@@ -109,7 +92,7 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], organization.id)
 
-    def test_retrieve_organization_returns_not_found_for_non_member(self):
+    def test_retrieve_organization_returns_not_found_for_other_user(self):
         user = create_user(username="api-detail-outsider")
         organization = create_organization()
         self.authenticate(user)
@@ -121,32 +104,13 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
             response.data["error"]["code"],
-            "user_not_member_of_organization",
+            "organization_not_found",
         )
 
-    def test_member_cannot_patch_organization(self):
-        user = create_user(username="api-patch-member")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
-        )
+    def test_owner_can_patch_organization(self):
+        user = create_user(username="api-patch-owner")
+        organization = create_organization(created_by=user, name="Before Patch")
         self.authenticate(user)
-
-        response = self.client.patch(
-            organization_detail_url(organization.id),
-            {"name": "Member Update"},
-            format="json",
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data["error"]["code"], "permission_denied")
-
-    def test_admin_can_patch_organization(self):
-        owner = create_user(username="api-patch-owner")
-        admin = create_user(username="api-patch-admin")
-        organization = create_organization(created_by=owner, name="Before Patch")
-        create_membership(user=admin, organization=organization, role=Role.ADMIN)
-        self.authenticate(admin)
 
         response = self.client.patch(
             organization_detail_url(organization.id),
@@ -158,9 +122,22 @@ class OrganizationsAPITests(APITestCase):
         organization.refresh_from_db()
         self.assertEqual(organization.name, "After Patch")
 
+    def test_other_user_cannot_patch_organization(self):
+        user = create_user(username="api-patch-outsider")
+        organization = create_organization(name="Patch Hidden")
+        self.authenticate(user)
+
+        response = self.client.patch(
+            organization_detail_url(organization.id),
+            {"name": "Forbidden Update"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_owner_can_delete_organization(self):
         user = create_user(username="api-delete-owner")
-        organization, _ = create_organization_with_membership(user=user)
+        organization = create_organization(created_by=user)
         self.authenticate(user)
 
         response = self.client.delete(
@@ -170,18 +147,14 @@ class OrganizationsAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Organization.objects.filter(id=organization.id).exists())
 
-    def test_member_cannot_delete_organization(self):
-        user = create_user(username="api-delete-member")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
-        )
+    def test_other_user_cannot_delete_organization(self):
+        user = create_user(username="api-delete-outsider")
+        organization = create_organization(name="Delete Hidden")
         self.authenticate(user)
 
         response = self.client.delete(
             organization_detail_url(organization.id),
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.data["error"]["code"], "permission_denied")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Organization.objects.filter(id=organization.id).exists())

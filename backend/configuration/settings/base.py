@@ -96,7 +96,6 @@ INSTALLED_APPS = [
     "apps.accounts.apps.AccountsConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.organizations.apps.OrganizationsConfig",
-    "apps.blendes.apps.BlendesConfig",
     "drf_spectacular",
 ]
 

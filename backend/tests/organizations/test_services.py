@@ -3,10 +3,9 @@ from django.test import TestCase
 from apps.organizations.exceptions import (
     OrganizationAlreadyExistsError,
     OrganizationInactiveError,
-    UserNotAdminOfOrganizationError,
-    UserNotMemberOfOrganizationError,
+    OrganizationNotFoundError,
 )
-from apps.organizations.models import Organization, OrganizationMembership, Role
+from apps.organizations.models import Organization
 from apps.organizations.services import (
     create_organization_service,
     delete_organization_service,
@@ -15,28 +14,23 @@ from apps.organizations.services import (
     update_organization_service,
 )
 from tests.authentication.factories import create_user
-from tests.organizations.factories import (
-    create_membership,
-    create_organization,
-    create_organization_with_membership,
-)
+from tests.organizations.factories import create_organization
 
 
 class ListUserOrganizationsServiceTests(TestCase):
-    def test_lists_only_active_organizations_where_user_is_member(self):
+    def test_lists_only_active_organizations_created_by_user(self):
         user = create_user(username="list-user")
-        active_org, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
+        other_user = create_user(username="list-other")
+        active_org = create_organization(
+            created_by=user,
             name="Active Org",
         )
-        create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
+        create_organization(
+            created_by=user,
             name="Inactive Org",
             is_active=False,
         )
-        create_organization(name="Outside Org")
+        create_organization(created_by=other_user, name="Outside Org")
 
         organizations = list(list_user_organizations_service(user))
 
@@ -44,30 +38,25 @@ class ListUserOrganizationsServiceTests(TestCase):
 
 
 class GetUserOrganizationServiceTests(TestCase):
-    def test_returns_organization_for_member_and_stores_current_role(self):
+    def test_returns_organization_created_by_user(self):
         user = create_user(username="detail-user")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.ADMIN,
-        )
+        organization = create_organization(created_by=user)
 
         result = get_user_organization_service(user, organization.id)
 
         self.assertEqual(result, organization)
-        self.assertEqual(result._current_user_membership_role, Role.ADMIN)
 
-    def test_raises_when_user_is_not_member(self):
+    def test_raises_when_user_does_not_own_organization(self):
         user = create_user(username="detail-outsider")
         organization = create_organization()
 
-        with self.assertRaises(UserNotMemberOfOrganizationError):
+        with self.assertRaises(OrganizationNotFoundError):
             get_user_organization_service(user, organization.id)
 
     def test_raises_when_organization_is_inactive(self):
         user = create_user(username="detail-inactive")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
+        organization = create_organization(
+            created_by=user,
             is_active=False,
         )
 
@@ -76,7 +65,7 @@ class GetUserOrganizationServiceTests(TestCase):
 
 
 class CreateOrganizationServiceTests(TestCase):
-    def test_creates_organization_and_owner_membership(self):
+    def test_creates_organization_owned_by_user(self):
         user = create_user(username="create-owner")
 
         organization = create_organization_service(
@@ -86,13 +75,7 @@ class CreateOrganizationServiceTests(TestCase):
         )
 
         self.assertEqual(organization.created_by, user)
-        self.assertTrue(
-            OrganizationMembership.objects.filter(
-                user=user,
-                organization=organization,
-                role=Role.OWNER,
-            ).exists()
-        )
+        self.assertEqual(organization.name, "Created Org")
 
     def test_raises_domain_error_for_duplicate_name(self):
         user = create_user(username="create-duplicate")
@@ -105,9 +88,8 @@ class CreateOrganizationServiceTests(TestCase):
 class UpdateOrganizationServiceTests(TestCase):
     def test_owner_can_update_organization(self):
         user = create_user(username="update-owner")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.OWNER,
+        organization = create_organization(
+            created_by=user,
             name="Old Name",
         )
 
@@ -123,29 +105,11 @@ class UpdateOrganizationServiceTests(TestCase):
         self.assertEqual(organization.name, "New Name")
         self.assertEqual(organization.description, "New description")
 
-    def test_admin_can_update_organization(self):
-        owner = create_user(username="update-owner")
-        admin = create_user(username="update-admin")
-        organization = create_organization(created_by=owner)
-        create_membership(user=admin, organization=organization, role=Role.ADMIN)
+    def test_other_user_cannot_update_organization(self):
+        user = create_user(username="update-outsider")
+        organization = create_organization()
 
-        update_organization_service(
-            user=admin,
-            organization_id=organization.id,
-            name="Admin Updated",
-        )
-
-        organization.refresh_from_db()
-        self.assertEqual(organization.name, "Admin Updated")
-
-    def test_member_cannot_update_organization(self):
-        user = create_user(username="update-member")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
-        )
-
-        with self.assertRaises(UserNotAdminOfOrganizationError):
+        with self.assertRaises(OrganizationNotFoundError):
             update_organization_service(
                 user=user,
                 organization_id=organization.id,
@@ -154,7 +118,7 @@ class UpdateOrganizationServiceTests(TestCase):
 
     def test_noop_update_returns_organization_without_saving_fields(self):
         user = create_user(username="update-noop")
-        organization, _ = create_organization_with_membership(user=user)
+        organization = create_organization(created_by=user)
 
         result = update_organization_service(
             user=user,
@@ -167,20 +131,17 @@ class UpdateOrganizationServiceTests(TestCase):
 class DeleteOrganizationServiceTests(TestCase):
     def test_owner_can_delete_organization(self):
         user = create_user(username="delete-owner")
-        organization, _ = create_organization_with_membership(user=user)
+        organization = create_organization(created_by=user)
 
         delete_organization_service(user=user, organization_id=organization.id)
 
         self.assertFalse(Organization.objects.filter(id=organization.id).exists())
 
-    def test_member_cannot_delete_organization(self):
-        user = create_user(username="delete-member")
-        organization, _ = create_organization_with_membership(
-            user=user,
-            role=Role.MEMBER,
-        )
+    def test_other_user_cannot_delete_organization(self):
+        user = create_user(username="delete-outsider")
+        organization = create_organization()
 
-        with self.assertRaises(UserNotAdminOfOrganizationError):
+        with self.assertRaises(OrganizationNotFoundError):
             delete_organization_service(user=user, organization_id=organization.id)
 
         self.assertTrue(Organization.objects.filter(id=organization.id).exists())
