@@ -1,6 +1,7 @@
 """Shared settings for every BlendESFlow environment."""
 
 from datetime import timedelta
+from importlib.util import find_spec
 from pathlib import Path
 
 import environ
@@ -95,8 +96,15 @@ INSTALLED_APPS = [
     "apps.accounts.apps.AccountsConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.organizations.apps.OrganizationsConfig",
+    "apps.blendes.apps.BlendesConfig",
     "drf_spectacular",
 ]
+
+SILENCED_SYSTEM_CHECKS = []
+if find_spec("psycopg") or find_spec("psycopg2"):
+    INSTALLED_APPS.append("django.contrib.postgres")
+else:
+    SILENCED_SYSTEM_CHECKS.append("postgres.E005")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
