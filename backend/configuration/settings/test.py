@@ -29,7 +29,7 @@ DATABASES = {
 }
 
 MIGRATION_MODULES = {
-    "blendes_flow": None,
+    "blendes": None,
     "organizations": None,
 }
 

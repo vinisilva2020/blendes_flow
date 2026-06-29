@@ -52,6 +52,18 @@ const router = createRouter({
       path: '/canvas',
       name: 'canvas',
       component: () => import('../views/canvas/Canvas.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/dashboard/Index.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
     },
   ],
 })
