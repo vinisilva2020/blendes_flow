@@ -46,5 +46,11 @@ REST_FRAMEWORK = {
         **REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"],  # noqa: F405
         "auth_login": "1000/minute",
         "auth_refresh": "1000/minute",
+        "blaves_management": "1000/minute",
+        "boundaries_management": "1000/minute",
+        "boundaries_global_list": "1000/minute",
+        "schapters_management": "1000/minute",
+        "schapters_global_list": "1000/minute",
+        "facet_descriptions_management": "1000/minute",
     },
 }
