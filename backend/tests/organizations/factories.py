@@ -20,9 +20,7 @@ def create_organization(*, created_by=None, **overrides):
     return Organization.objects.create(**data)
 
 
-def create_membership(*, user=None, organization=None, role=Role.MEMBER):
-    user = user or create_user()
-    organization = organization or create_organization(created_by=user)
+def create_membership(*, user, organization, role=Role.OWNER):
     return OrganizationMembership.objects.create(
         user=user,
         organization=organization,
@@ -30,14 +28,8 @@ def create_membership(*, user=None, organization=None, role=Role.MEMBER):
     )
 
 
-def create_organization_with_membership(
-    *,
-    user=None,
-    role=Role.OWNER,
-    **organization_overrides,
-):
-    user = user or create_user()
-    organization = create_organization(created_by=user, **organization_overrides)
+def create_organization_with_membership(*, user, role=Role.OWNER, **overrides):
+    organization = create_organization(created_by=user, **overrides)
     membership = create_membership(
         user=user,
         organization=organization,

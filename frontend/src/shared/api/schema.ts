@@ -164,6 +164,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/blaves/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lista e cadastra blaves no contexto da organização selecionada. */
+        get: operations["v1_blaves_list"];
+        put?: never;
+        /** @description Lista e cadastra blaves no contexto da organização selecionada. */
+        post: operations["v1_blaves_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/blaves/{blave_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+        get: operations["v1_blaves_retrieve"];
+        put?: never;
+        post?: never;
+        /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+        delete: operations["v1_blaves_destroy"];
+        options?: never;
+        head?: never;
+        /** @description Consulta e altera uma blave no contexto da organização selecionada. */
+        patch: operations["v1_blaves_partial_update"];
+        trace?: never;
+    };
     "/api/v1/organizations/": {
         parameters: {
             query?: never;
@@ -266,6 +303,55 @@ export interface components {
             /** Format: date-time */
             expires_at?: string | null;
         };
+        /** @description Valida os dados necessários para cadastrar uma blave. */
+        BlaveInputSerializerV1: {
+            organization_id: number;
+            title: string;
+            description?: string | null;
+        };
+        /** @description Serializa o status dos movimentos associados a uma blave. */
+        BlaveMovementStatusOutputSerializerV1: {
+            movement: components["schemas"]["MovementEnum"];
+            status?: components["schemas"]["BlaveMovementStatusOutputSerializerV1StatusEnum"];
+            /** Format: date-time */
+            completed_at?: string | null;
+        };
+        /**
+         * @description * `LOCKED` - Bloqueado
+         *     * `ACTIVE` - Ativo
+         *     * `COMPLETED` - Concluido
+         *     * `INVALIDATED` - Invalidado
+         * @enum {string}
+         */
+        BlaveMovementStatusOutputSerializerV1StatusEnum: "LOCKED" | "ACTIVE" | "COMPLETED" | "INVALIDATED";
+        /** @description Serializa uma blave para consumo da API. */
+        BlaveOutputSerializerV1: {
+            readonly id: number;
+            readonly organization_id: number;
+            readonly created_by_user_id: number;
+            title: string;
+            description: string;
+            status?: components["schemas"]["StatusCe5Enum"];
+            current_movement?: components["schemas"]["CurrentMovementEnum"];
+            /** Format: int64 */
+            version_number?: number;
+            readonly movement_statuses: components["schemas"]["BlaveMovementStatusOutputSerializerV1"][];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /**
+         * @description * `BOUNDGROUND` - Boundground
+         *     * `LABOR` - Labor
+         *     * `ECHO` - Echo
+         *     * `NOISECATCH` - Noisecatch
+         *     * `DRAWBRIDGE` - Drawbridge
+         *     * `ENHANCE` - Enhance
+         *     * `SIGHTLINE` - Sightline
+         * @enum {string}
+         */
+        CurrentMovementEnum: "BOUNDGROUND" | "LABOR" | "ECHO" | "NOISECATCH" | "DRAWBRIDGE" | "ENHANCE" | "SIGHTLINE";
         /** @description Valida a credencial de login emitida pelo Google Identity Services. */
         GoogleLoginInputSerializerV1: {
             credential: string;
@@ -276,6 +362,17 @@ export interface components {
             identifier: string;
             password: string;
         };
+        /**
+         * @description * `BOUNDGROUND` - Boundground
+         *     * `LABOR` - Labor
+         *     * `ECHO` - Echo
+         *     * `NOISECATCH` - Noisecatch
+         *     * `DRAWBRIDGE` - Drawbridge
+         *     * `ENHANCE` - Enhance
+         *     * `SIGHTLINE` - Sightline
+         * @enum {string}
+         */
+        MovementEnum: "BOUNDGROUND" | "LABOR" | "ECHO" | "NOISECATCH" | "DRAWBRIDGE" | "ENHANCE" | "SIGHTLINE";
         OrganizationInputSerializerV1: {
             name: string;
             description?: string | null;
@@ -296,6 +393,13 @@ export interface components {
             email?: string;
             avatar_type?: string | null;
         };
+        /** @description Valida os dados permitidos para alterar uma blave. */
+        PatchedBlavePartialInputSerializerV1: {
+            title?: string;
+            description?: string | null;
+            status?: components["schemas"]["StatusCe5Enum"];
+            current_movement?: components["schemas"]["CurrentMovementEnum"];
+        };
         PatchedOrganizationPartialInputSerializerV1: {
             name?: string;
             description?: string | null;
@@ -304,6 +408,14 @@ export interface components {
         RefreshTokenInputSerializerV1: {
             refresh_token: string;
         };
+        /**
+         * @description * `DRAFT` - Rascunho
+         *     * `IN_PROGRESS` - Em andamento
+         *     * `COMPLETED` - Concluida
+         *     * `ARCHIVED` - Arquivada
+         * @enum {string}
+         */
+        StatusCe5Enum: "DRAFT" | "IN_PROGRESS" | "COMPLETED" | "ARCHIVED";
     };
     responses: never;
     parameters: never;
@@ -748,6 +860,262 @@ export interface operations {
                 content?: never;
             };
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_blaves_list: {
+        parameters: {
+            query: {
+                organization_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlaveOutputSerializerV1"][];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_blaves_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlaveInputSerializerV1"];
+                "application/x-www-form-urlencoded": components["schemas"]["BlaveInputSerializerV1"];
+                "multipart/form-data": components["schemas"]["BlaveInputSerializerV1"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlaveOutputSerializerV1"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_blaves_retrieve: {
+        parameters: {
+            query: {
+                organization_id: number;
+            };
+            header?: never;
+            path: {
+                blave_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlaveOutputSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_blaves_destroy: {
+        parameters: {
+            query: {
+                organization_id: number;
+            };
+            header?: never;
+            path: {
+                blave_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Blave excluída. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+        };
+    };
+    v1_blaves_partial_update: {
+        parameters: {
+            query: {
+                organization_id: number;
+            };
+            header?: never;
+            path: {
+                blave_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedBlavePartialInputSerializerV1"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBlavePartialInputSerializerV1"];
+                "multipart/form-data": components["schemas"]["PatchedBlavePartialInputSerializerV1"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlaveOutputSerializerV1"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["APIErrorSerializerV1"];
+                };
+            };
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
