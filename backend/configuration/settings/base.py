@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "apps.accounts.apps.AccountsConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.organizations.apps.OrganizationsConfig",
+    "apps.blendes_flow.apps.BlendesFlowConfig",
     "drf_spectacular",
 ]
 
@@ -230,6 +231,42 @@ REST_FRAMEWORK = {
         "users_registration": env(
             "USERS_REGISTRATION_THROTTLE_RATE",
             default="5/hour",
+        ),
+        "blaves_management": env(
+            "BLAVES_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "boundaries_management": env(
+            "BOUNDARIES_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "boundaries_global_list": env(
+            "BOUNDARIES_GLOBAL_LIST_THROTTLE_RATE",
+            default="60/minute",
+        ),
+        "schapters_management": env(
+            "SCHAPTERS_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "schapters_global_list": env(
+            "SCHAPTERS_GLOBAL_LIST_THROTTLE_RATE",
+            default="60/minute",
+        ),
+        "facet_descriptions_management": env(
+            "FACET_DESCRIPTIONS_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "risks_management": env(
+            "RISKS_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "kref_pratices_management": env(
+            "KREF_PRATICES_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
+        ),
+        "mixpoints_management": env(
+            "MIXPOINTS_MANAGEMENT_THROTTLE_RATE",
+            default="120/minute",
         ),
     },
 }
