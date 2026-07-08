@@ -4,6 +4,7 @@ from apps.blendes_flow.api.v1.views.boundaries import (
     BoundariesAPIViewV1,
     BoundaryDetailAPIViewV1,
     BoundaryGlobalNamesAPIViewV1,
+    SuggestedBoundariesAPIViewV1,
 )
 from apps.blendes_flow.api.v1.views.facet_descriptions import (
     FacetDescriptionDetailAPIViewV1,
@@ -25,6 +26,7 @@ from apps.blendes_flow.api.v1.views.schapters import (
     SchapterDetailAPIViewV1,
     SchapterGlobalNamesAPIViewV1,
     SchaptersAPIViewV1,
+    SuggestedSchaptersAPIViewV1,
 )
 from apps.blendes_flow.api.v1.views.blaves import (
     BlaveDetailAPIViewV1,
@@ -40,9 +42,19 @@ urlpatterns = [
         name="boundary-global-names",
     ),
     path(
+        "suggested-boundaries/",
+        SuggestedBoundariesAPIViewV1.as_view(),
+        name="suggested-boundary-list",
+    ),
+    path(
         "schapters/",
         SchapterGlobalNamesAPIViewV1.as_view(),
         name="schapter-global-names",
+    ),
+    path(
+        "suggested-schapters/",
+        SuggestedSchaptersAPIViewV1.as_view(),
+        name="suggested-schapter-list",
     ),
     path(
         "organizations/<int:organization_id>/blaves/",

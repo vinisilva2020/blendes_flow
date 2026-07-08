@@ -14,11 +14,25 @@ from apps.accounts.exceptions import (
     AccountAlreadyExistsError,
     AccountDomainError,
     AccountInactiveError,
+    InvalidCurrentPasswordError,
+    InvalidSocialAccountCredentialError,
+    LastAuthenticationMethodError,
+    SocialAccountConflictError,
+    SocialAccountHostedDomainError,
+    SocialAccountNotFoundError,
+    UnverifiedSocialAccountEmailError,
 )
 
 DOMAIN_ERROR_STATUS = {
     AccountAlreadyExistsError: 409,
     AccountInactiveError: 409,
+    InvalidCurrentPasswordError: 401,
+    InvalidSocialAccountCredentialError: 401,
+    UnverifiedSocialAccountEmailError: 403,
+    SocialAccountHostedDomainError: 403,
+    SocialAccountNotFoundError: 404,
+    SocialAccountConflictError: 409,
+    LastAuthenticationMethodError: 409,
 }
 
 PUBLIC_API_EXCEPTION_MESSAGES = {

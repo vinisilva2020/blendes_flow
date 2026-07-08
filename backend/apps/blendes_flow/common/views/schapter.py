@@ -19,6 +19,7 @@ from apps.blendes_flow.exceptions.schapters import (
     SchapterMovementNotAllowedError,
     SchapterNotFoundError,
     SchapterRoleTypeConflictError,
+    SchapterSuggestionNotFoundError,
 )
 
 DOMAIN_ERROR_STATUS = {
@@ -29,6 +30,7 @@ DOMAIN_ERROR_STATUS = {
     SchapterMovementNotAllowedError: 409,
     SchapterNotFoundError: 404,
     SchapterRoleTypeConflictError: 409,
+    SchapterSuggestionNotFoundError: 404,
 }
 
 PUBLIC_API_EXCEPTION_MESSAGES = {

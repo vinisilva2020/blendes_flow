@@ -84,6 +84,7 @@ class Blave(TimeStampedModel):
         choices=Movement.choices,
         default=Movement.BOUNDGROUND,
     )
+    is_favorite = models.BooleanField(default=False)
     version_number = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -139,6 +140,26 @@ class BlaveMovements(models.Model):
         return f"{self.blave} - {self.movement}: {self.status}"
 
 
+class SuggestedBoundary(TimeStampedModel):
+    """
+    Representa uma boundary sugerida para uma blave.
+    Ela e criada e gerenciada pelo software via migracoes.
+    """
+
+    name = models.CharField(max_length=255, db_index=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        db_table = "suggested_boundaries"
+        ordering = ["name", "created_at"]
+        indexes = [
+            models.Index(fields=["name"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=["name"], name="uq_suggested_boundary_name")
+        ]
+
+
 class Boundary(TimeStampedModel):
     """
     Representa a área delimitada em que uma análise é realizada dentro da blave.
@@ -160,6 +181,13 @@ class Boundary(TimeStampedModel):
         blank=True,
         related_name="inner_boundaries",
     )
+    suggested_boundary = models.ForeignKey(
+        SuggestedBoundary,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="boundaries",
+    )
     name = models.CharField(max_length=255, db_index=True)
     description = models.TextField(blank=True)
 
@@ -170,6 +198,26 @@ class Boundary(TimeStampedModel):
             models.UniqueConstraint(
                 fields=["name", "blave"], name="uq_boundary_blave_name"
             )
+        ]
+
+
+class SuggestedSchapter(TimeStampedModel):
+    """
+    Representa uma schapter sugerida para uma boundary.
+    Ela e criada e gerenciada pelo software via migracoes.
+    """
+
+    name = models.CharField(max_length=255, db_index=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        db_table = "suggested_schapters"
+        ordering = ["name", "created_at"]
+        indexes = [
+            models.Index(fields=["name"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=["name"], name="uq_suggested_schapter_name")
         ]
 
 
@@ -185,6 +233,13 @@ class Schapter(TimeStampedModel):
 
     boundary = models.ForeignKey(
         Boundary, on_delete=models.CASCADE, related_name="schapters"
+    )
+    suggested_schapter = models.ForeignKey(
+        SuggestedSchapter,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="schapters",
     )
     name = models.CharField(max_length=255, db_index=True)
     roles = models.ManyToManyField(

@@ -74,7 +74,7 @@ def get_blave_service(user, blave_id, **_scope):
 
 
 @transaction.atomic
-def create_blave_service(user, organization_id, title: str):
+def create_blave_service(user, organization_id, title: str, is_favorite=False):
     """Cria uma blave e inicializa todos os movimentos do fluxo."""
     organization = _get_user_owned_active_organization_dto(
         user=user,
@@ -84,6 +84,7 @@ def create_blave_service(user, organization_id, title: str):
         organization_id=organization.id,
         created_by_user=user,
         title=title,
+        is_favorite=is_favorite,
     )
     blave.full_clean()
     blave.save()
@@ -110,16 +111,24 @@ def create_blave_service(user, organization_id, title: str):
 
 
 @transaction.atomic
-def update_blave_service(user, blave_id, title=None, **_scope):
-    """Atualiza apenas o titulo de uma blave criada pelo usuario."""
+def update_blave_service(user, blave_id, title=None, is_favorite=None, **_scope):
+    """Atualiza campos simples de uma blave criada pelo usuario."""
     blave = _get_user_owned_blave_by_id(user=user, blave_id=blave_id)
 
-    if title is None:
+    update_fields = []
+    if title is not None:
+        blave.title = title
+        update_fields.append("title")
+
+    if is_favorite is not None:
+        blave.is_favorite = is_favorite
+        update_fields.append("is_favorite")
+
+    if not update_fields:
         return blave
 
-    blave.title = title
     blave.full_clean()
-    blave.save(update_fields=["title", "updated_at"])
+    blave.save(update_fields=[*update_fields, "updated_at"])
     return blave
 
 

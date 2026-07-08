@@ -16,7 +16,9 @@ dependencies = [
     "pytest (>=9.1.1,<10.0.0)",
     "drf-spectacular (>=0.29.0,<0.30.0)",
     "google-auth (>=2.55.0,<3.0.0)",
-    "requests (>=2.32.0,<3.0.0)"
+    "requests (>=2.32.0,<3.0.0)",
+    "psycopg[binary] (>=3.3.4,<4.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)"
 ]
 
 

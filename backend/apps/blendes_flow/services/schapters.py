@@ -7,14 +7,23 @@ from apps.blendes_flow.exceptions.schapters import (
     SchapterMovementNotAllowedError,
     SchapterNotFoundError,
     SchapterRoleTypeConflictError,
+    SchapterSuggestionNotFoundError,
 )
-from apps.blendes_flow.models import Boundary, Movement, Role, RoleExecutionSchapter, Schapter
+from apps.blendes_flow.models import (
+    Boundary,
+    Movement,
+    Role,
+    RoleExecutionSchapter,
+    Schapter,
+)
 from apps.blendes_flow.querysets.schapters import (
     boundary_in_blave_queryset,
     boundary_schapters_queryset,
     global_schapter_names_queryset,
     schapter_in_boundary_queryset,
     schapter_name_queryset,
+    suggested_schapter_queryset,
+    suggested_schapters_queryset,
     user_boundary_queryset,
     user_schapter_queryset,
 )
@@ -56,6 +65,20 @@ def _get_user_schapter(user, schapter_id):
     return schapter
 
 
+def _get_suggested_schapter(suggested_schapter_id):
+    """Busca uma sugestao de schapter gerenciada pelo software."""
+    suggested_schapter = (
+        suggested_schapter_queryset()
+        .filter(
+            id=suggested_schapter_id,
+        )
+        .first()
+    )
+    if suggested_schapter is None:
+        raise SchapterSuggestionNotFoundError
+    return suggested_schapter
+
+
 def _get_schapter_in_boundary(boundary, schapter_id):
     """Busca uma schapter dentro da boundary informada."""
     schapter = schapter_in_boundary_queryset(boundary).filter(id=schapter_id).first()
@@ -92,10 +115,7 @@ def _replace_role_executions(schapter, roles):
     """Substitui os vinculos de execucao de roles de forma performatica."""
     RoleExecutionSchapter.objects.filter(schapter=schapter).delete()
     RoleExecutionSchapter.objects.bulk_create(
-        [
-            RoleExecutionSchapter(schapter=schapter, role=role)
-            for role in roles
-        ],
+        [RoleExecutionSchapter(schapter=schapter, role=role) for role in roles],
         ignore_conflicts=True,
     )
 
@@ -111,6 +131,11 @@ def list_global_schapter_names_service():
     return global_schapter_names_queryset()
 
 
+def list_suggested_schapters_service(search=None):
+    """Lista sugestoes de schapters com paginacao aplicada na view."""
+    return suggested_schapters_queryset(search=search)
+
+
 def get_schapter_service(
     user,
     schapter_id,
@@ -124,17 +149,31 @@ def get_schapter_service(
 def create_schapter_service(
     user,
     boundary_id,
-    name,
     roles,
+    name=None,
+    suggested_schapter_id=None,
     **_scope,
 ):
     """Cria uma schapter e suas roles executoras em uma unica transacao."""
     boundary = _get_user_boundary(user=user, boundary_id=boundary_id)
     blave = boundary.blave
     _ensure_labor(blave)
+
+    suggested_schapter = None
+    if suggested_schapter_id is not None:
+        suggested_schapter = _get_suggested_schapter(
+            suggested_schapter_id=suggested_schapter_id,
+        )
+        if not name:
+            name = suggested_schapter.name
+
     _ensure_name_available(boundary=boundary, name=name)
 
-    schapter = Schapter(boundary=boundary, name=name)
+    schapter = Schapter(
+        boundary=boundary,
+        suggested_schapter=suggested_schapter,
+        name=name,
+    )
     schapter.full_clean()
     schapter.save()
 
@@ -156,6 +195,7 @@ def update_schapter_service(
     schapter_id,
     name=None,
     roles=UNSET,
+    suggested_schapter_id=UNSET,
     **_scope,
 ):
     """Atualiza campos permitidos de uma schapter."""
@@ -173,6 +213,17 @@ def update_schapter_service(
         schapter.name = name
         schapter.full_clean()
         schapter.save(update_fields=["name", "updated_at"])
+
+    if suggested_schapter_id is not UNSET:
+        if suggested_schapter_id is None:
+            suggested_schapter = None
+        else:
+            suggested_schapter = _get_suggested_schapter(
+                suggested_schapter_id=suggested_schapter_id,
+            )
+        schapter.suggested_schapter = suggested_schapter
+        schapter.full_clean()
+        schapter.save(update_fields=["suggested_schapter", "updated_at"])
 
     if roles is not UNSET:
         resolved_roles = _get_or_create_roles(

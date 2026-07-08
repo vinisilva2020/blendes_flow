@@ -9,3 +9,5 @@ infrastructure/secrets/*
 skills-lock.json
 skills-lock.yaml
 docs
+*.sqlite3
+prompt.md

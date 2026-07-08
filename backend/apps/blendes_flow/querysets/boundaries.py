@@ -1,4 +1,6 @@
-from apps.blendes_flow.models import Blave, Boundary
+from django.db.models import Q
+
+from apps.blendes_flow.models import Blave, Boundary, SuggestedBoundary
 
 
 def user_owned_blave_for_boundaries_queryset(user):
@@ -11,9 +13,11 @@ def user_owned_blave_for_boundaries_queryset(user):
 
 def boundary_in_blave_queryset(blave):
     """Busca boundaries dentro da blave com dados do pai carregados."""
-    return Boundary.objects.select_related("blave", "outer_boundary").filter(
-        blave=blave,
-    )
+    return Boundary.objects.select_related(
+        "blave",
+        "outer_boundary",
+        "suggested_boundary",
+    ).filter(blave=blave)
 
 
 def user_boundary_queryset(user):
@@ -22,6 +26,7 @@ def user_boundary_queryset(user):
         "blave",
         "blave__organization",
         "outer_boundary",
+        "suggested_boundary",
     ).filter(
         blave__organization__created_by=user,
         blave__created_by_user=user,
@@ -33,6 +38,7 @@ def blave_boundaries_queryset(blave):
     return Boundary.objects.filter(blave=blave).select_related(
         "blave",
         "outer_boundary",
+        "suggested_boundary",
     )
 
 
@@ -44,3 +50,26 @@ def global_boundary_names_queryset():
 def boundary_name_queryset(blave, name):
     """Centraliza a busca por nome para validar duplicidade na blave."""
     return Boundary.objects.filter(blave=blave, name=name)
+
+
+def suggested_boundaries_queryset(search=None):
+    """Lista sugestoes de boundary com colunas minimas e busca index-friendly."""
+    queryset = SuggestedBoundary.objects.only(
+        "id",
+        "name",
+        "description",
+        "created_at",
+        "updated_at",
+    ).order_by("name", "id")
+
+    if search:
+        queryset = queryset.filter(
+            Q(name__icontains=search) | Q(description__icontains=search)
+        )
+
+    return queryset
+
+
+def suggested_boundary_queryset():
+    """Centraliza consultas por sugestao de boundary."""
+    return SuggestedBoundary.objects.only("id", "name", "description")

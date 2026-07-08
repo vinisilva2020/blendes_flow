@@ -39,6 +39,13 @@ class SchapterBoundaryNotFoundError(SchapterDomainError):
     message = "Boundary not found"
 
 
+class SchapterSuggestionNotFoundError(SchapterDomainError):
+    """Excecao para sugestao de schapter inexistente."""
+
+    code = "schapter_suggestion_not_found"
+    message = "Suggested schapter not found"
+
+
 class SchapterNotFoundError(SchapterDomainError):
     """Excecao para schapter inexistente ou fora da boundary informada."""
 
