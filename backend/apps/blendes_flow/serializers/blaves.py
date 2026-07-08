@@ -7,6 +7,7 @@ class BlaveInputSerializerV1(serializers.Serializer):
     """Valida os dados usados no cadastro de uma blave."""
 
     title = serializers.CharField(max_length=255, trim_whitespace=True)
+    is_favorite = serializers.BooleanField(required=False)
 
 
 class BlavePartialInputSerializerV1(serializers.Serializer):
@@ -17,6 +18,7 @@ class BlavePartialInputSerializerV1(serializers.Serializer):
         required=False,
         trim_whitespace=True,
     )
+    is_favorite = serializers.BooleanField(required=False)
 
 
 class BlaveMovementOutputSerializerV1(serializers.ModelSerializer):
@@ -51,6 +53,7 @@ class BlaveOutputSerializerV1(serializers.ModelSerializer):
             "title",
             "status",
             "current_movement",
+            "is_favorite",
             "version_number",
             "movements",
             "created_at",

@@ -20,6 +20,7 @@ from apps.blendes_flow.exceptions.boundaries import (
     BoundaryMovementNotAllowedError,
     BoundaryNotFoundError,
     BoundaryOuterNotFoundError,
+    BoundarySuggestionNotFoundError,
 )
 
 DOMAIN_ERROR_STATUS = {
@@ -31,6 +32,7 @@ DOMAIN_ERROR_STATUS = {
     BoundaryMovementNotAllowedError: 409,
     BoundaryNotFoundError: 404,
     BoundaryOuterNotFoundError: 404,
+    BoundarySuggestionNotFoundError: 404,
 }
 
 PUBLIC_API_EXCEPTION_MESSAGES = {

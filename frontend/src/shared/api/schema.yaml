@@ -13,123 +13,123 @@ paths:
         - YAML: application/vnd.oai.openapi
         - JSON: application/vnd.oai.openapi+json
       parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - json
-          - yaml
-      - in: query
-        name: lang
-        schema:
-          type: string
-          enum:
-          - af
-          - ar
-          - ar-dz
-          - ast
-          - az
-          - be
-          - bg
-          - bn
-          - br
-          - bs
-          - ca
-          - ckb
-          - cs
-          - cy
-          - da
-          - de
-          - dsb
-          - el
-          - en
-          - en-au
-          - en-gb
-          - eo
-          - es
-          - es-ar
-          - es-co
-          - es-mx
-          - es-ni
-          - es-ve
-          - et
-          - eu
-          - fa
-          - fi
-          - fr
-          - fy
-          - ga
-          - gd
-          - gl
-          - he
-          - hi
-          - hr
-          - hsb
-          - ht
-          - hu
-          - hy
-          - ia
-          - id
-          - ig
-          - io
-          - is
-          - it
-          - ja
-          - ka
-          - kab
-          - kk
-          - km
-          - kn
-          - ko
-          - ky
-          - lb
-          - lt
-          - lv
-          - mk
-          - ml
-          - mn
-          - mr
-          - ms
-          - my
-          - nb
-          - ne
-          - nl
-          - nn
-          - os
-          - pa
-          - pl
-          - pt
-          - pt-br
-          - ro
-          - ru
-          - sk
-          - sl
-          - sq
-          - sr
-          - sr-latn
-          - sv
-          - sw
-          - ta
-          - te
-          - tg
-          - th
-          - tk
-          - tr
-          - tt
-          - udm
-          - ug
-          - uk
-          - ur
-          - uz
-          - vi
-          - zh-hans
-          - zh-hant
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - json
+              - yaml
+        - in: query
+          name: lang
+          schema:
+            type: string
+            enum:
+              - af
+              - ar
+              - ar-dz
+              - ast
+              - az
+              - be
+              - bg
+              - bn
+              - br
+              - bs
+              - ca
+              - ckb
+              - cs
+              - cy
+              - da
+              - de
+              - dsb
+              - el
+              - en
+              - en-au
+              - en-gb
+              - eo
+              - es
+              - es-ar
+              - es-co
+              - es-mx
+              - es-ni
+              - es-ve
+              - et
+              - eu
+              - fa
+              - fi
+              - fr
+              - fy
+              - ga
+              - gd
+              - gl
+              - he
+              - hi
+              - hr
+              - hsb
+              - ht
+              - hu
+              - hy
+              - ia
+              - id
+              - ig
+              - io
+              - is
+              - it
+              - ja
+              - ka
+              - kab
+              - kk
+              - km
+              - kn
+              - ko
+              - ky
+              - lb
+              - lt
+              - lv
+              - mk
+              - ml
+              - mn
+              - mr
+              - ms
+              - my
+              - nb
+              - ne
+              - nl
+              - nn
+              - os
+              - pa
+              - pl
+              - pt
+              - pt-br
+              - ro
+              - ru
+              - sk
+              - sl
+              - sq
+              - sr
+              - sr-latn
+              - sv
+              - sw
+              - ta
+              - te
+              - tg
+              - th
+              - tk
+              - tr
+              - tt
+              - udm
+              - ug
+              - uk
+              - ur
+              - uz
+              - vi
+              - zh-hans
+              - zh-hant
       tags:
-      - schema
+        - schema
       security:
-      - bearerAuth: []
-      - {}
+        - bearerAuth: []
+        - {}
       responses:
         '200':
           content:
@@ -155,7 +155,7 @@ paths:
       operationId: v1_accounts_create
       description: Register a local user account.
       tags:
-      - Accounts
+        - Accounts
       requestBody:
         content:
           application/json:
@@ -198,9 +198,9 @@ paths:
       operationId: v1_accounts_me_retrieve
       description: Retrieve, update or soft-delete the authenticated user's own account.
       tags:
-      - Accounts
+        - Accounts
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -224,7 +224,7 @@ paths:
       operationId: v1_accounts_me_partial_update
       description: Retrieve, update or soft-delete the authenticated user's own account.
       tags:
-      - Accounts
+        - Accounts
       requestBody:
         content:
           application/json:
@@ -237,7 +237,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAccountPartialInputSerializerV1'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -267,13 +267,133 @@ paths:
       operationId: v1_accounts_me_destroy
       description: Retrieve, update or soft-delete the authenticated user's own account.
       tags:
-      - Accounts
+        - Accounts
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: Account deactivated.
         '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/accounts/me/password/:
+    put:
+      operationId: v1_accounts_me_password_update
+      description: Set or change the authenticated user's local password.
+      tags:
+        - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPasswordInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountPasswordInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountPasswordInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Local password updated.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/accounts/me/social-accounts/google/:
+    post:
+      operationId: v1_accounts_me_social_accounts_google_create
+      description: Link or unlink the authenticated user's Google account.
+      tags:
+        - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountGoogleSocialAccountInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountGoogleSocialAccountInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountGoogleSocialAccountInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_accounts_me_social_accounts_google_destroy
+      description: Link or unlink the authenticated user's Google account.
+      tags:
+        - Accounts
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Google social account unlinked.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
           content:
             application/json:
               schema:
@@ -284,7 +404,7 @@ paths:
       operationId: v1_authentication_google_create
       description: Autentica usando a credencial do Google Identity Services.
       tags:
-      - Authentication
+        - Authentication
       requestBody:
         content:
           application/json:
@@ -345,7 +465,7 @@ paths:
       operationId: v1_authentication_login_create
       description: Autentica um usuário e retorna os tokens de acesso e refresh.
       tags:
-      - Authentication
+        - Authentication
       requestBody:
         content:
           application/json:
@@ -388,9 +508,9 @@ paths:
       operationId: v1_authentication_logout_create
       description: Revoga a sessão de autenticação atual do usuário.
       tags:
-      - Authentication
+        - Authentication
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: Authentication session revoked.
@@ -406,7 +526,7 @@ paths:
       description: Renova os tokens de acesso e refresh usando um token de refresh
         válido.
       tags:
-      - Authentication
+        - Authentication
       requestBody:
         content:
           application/json:
@@ -449,9 +569,9 @@ paths:
       operationId: v1_authentication_sessions_list
       description: Retorna as sessões de autenticação ativas do usuário.
       tags:
-      - Authentication
+        - Authentication
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -472,16 +592,16 @@ paths:
       operationId: v1_authentication_sessions_destroy
       description: Revoga a sessão de autenticação especificada pelo ID.
       parameters:
-      - in: path
-        name: session_id
-        schema:
-          type: string
-          format: uuid
-        required: true
+        - in: path
+          name: session_id
+          schema:
+            type: string
+            format: uuid
+          required: true
       tags:
-      - Authentication
+        - Authentication
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: Authentication session revoked.
@@ -497,80 +617,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
-  /api/v1/blaves/:
+  /api/v1/blaves/{blave_id}/:
     get:
-      operationId: v1_blaves_list
-      description: Lista e cadastra blaves no contexto da organização selecionada.
+      operationId: v1_blaves_retrieve
+      description: Recupera, atualiza e remove uma blave do usuario autenticado.
       parameters:
-      - in: query
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: blave_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Blaves
+        - Blaves
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BlaveOutputSerializerV1'
-          description: ''
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIErrorSerializerV1'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIErrorSerializerV1'
-          description: ''
-    post:
-      operationId: v1_blaves_create
-      description: Lista e cadastra blaves no contexto da organização selecionada.
-      tags:
-      - Blaves
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BlaveInputSerializerV1'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/BlaveInputSerializerV1'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/BlaveInputSerializerV1'
-        required: true
-      security:
-      - bearerAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
                 $ref: '#/components/schemas/BlaveOutputSerializerV1'
           description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIErrorSerializerV1'
-          description: ''
         '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIErrorSerializerV1'
-          description: ''
-        '403':
           content:
             application/json:
               schema:
@@ -588,39 +656,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
-  /api/v1/blaves/{blave_id}/:
-    get:
-      operationId: v1_blaves_retrieve
-      description: Consulta e altera uma blave no contexto da organização selecionada.
-      parameters:
-      - in: path
-        name: blave_id
-        schema:
-          type: integer
-        required: true
-      - in: query
-        name: organization_id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Blaves
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BlaveOutputSerializerV1'
-          description: ''
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/APIErrorSerializerV1'
-          description: ''
-        '404':
+        '429':
           content:
             application/json:
               schema:
@@ -628,20 +664,15 @@ paths:
           description: ''
     patch:
       operationId: v1_blaves_partial_update
-      description: Consulta e altera uma blave no contexto da organização selecionada.
+      description: Recupera, atualiza e remove uma blave do usuario autenticado.
       parameters:
-      - in: path
-        name: blave_id
-        schema:
-          type: integer
-        required: true
-      - in: query
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: blave_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Blaves
+        - Blaves
       requestBody:
         content:
           application/json:
@@ -654,7 +685,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedBlavePartialInputSerializerV1'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -674,7 +705,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
-        '403':
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_blaves_destroy
+      description: Recupera, atualiza e remove uma blave do usuario autenticado.
+      parameters:
+        - in: path
+          name: blave_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Blaves
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Blave deleted.
+        '401':
           content:
             application/json:
               schema:
@@ -686,27 +751,96 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
-    delete:
-      operationId: v1_blaves_destroy
-      description: Consulta e altera uma blave no contexto da organização selecionada.
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/blaves/{blave_id}/boundaries/:
+    get:
+      operationId: v1_blaves_boundaries_list
+      description: Lista e cadastra boundaries dentro de uma blave.
       parameters:
-      - in: path
-        name: blave_id
-        schema:
-          type: integer
-        required: true
-      - in: query
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: blave_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Blaves
+        - Boundaries
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
-        '204':
-          description: Blave excluída.
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoundaryOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_blaves_boundaries_create
+      description: Lista e cadastra boundaries dentro de uma blave.
+      parameters:
+        - in: path
+          name: blave_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Boundaries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoundaryInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BoundaryInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BoundaryInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoundaryOutputSerializerV1'
+          description: ''
         '400':
           content:
             application/json:
@@ -719,7 +853,84 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
-        '403':
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/boundaries/:
+    get:
+      operationId: v1_boundaries_list
+      description: Lista nomes globais de boundaries para importacao.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Numero da pagina.
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Quantidade por pagina, limitada a 50.
+      tags:
+        - Boundaries
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBoundaryGlobalNameSerializerV1List'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/boundaries/{boundary_id}/:
+    get:
+      operationId: v1_boundaries_retrieve
+      description: Recupera, atualiza e remove uma boundary do usuario autenticado.
+      parameters:
+        - in: path
+          name: boundary_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Boundaries
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoundaryOutputSerializerV1'
+          description: ''
+        '401':
           content:
             application/json:
               schema:
@@ -731,14 +942,896 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_boundaries_partial_update
+      description: Recupera, atualiza e remove uma boundary do usuario autenticado.
+      parameters:
+        - in: path
+          name: boundary_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Boundaries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBoundaryPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBoundaryPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBoundaryPartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoundaryOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_boundaries_destroy
+      description: Recupera, atualiza e remove uma boundary do usuario autenticado.
+      parameters:
+        - in: path
+          name: boundary_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Boundaries
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Boundary deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/boundaries/{boundary_id}/schapters/:
+    get:
+      operationId: v1_boundaries_schapters_list
+      description: Lista e cadastra schapters dentro de uma boundary.
+      parameters:
+        - in: path
+          name: boundary_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Schapters
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchapterOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_boundaries_schapters_create
+      description: Lista e cadastra schapters dentro de uma boundary.
+      parameters:
+        - in: path
+          name: boundary_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Schapters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchapterInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SchapterInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SchapterInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchapterOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/concrete-actions/{concrete_action_id}/mixpoints/:
+    get:
+      operationId: v1_concrete_actions_mixpoints_list
+      description: Lista e cadastra mixpoints dentro de uma acao concreta.
+      parameters:
+        - in: path
+          name: concrete_action_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Mixpoints
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MixpointOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_concrete_actions_mixpoints_create
+      description: Lista e cadastra mixpoints dentro de uma acao concreta.
+      parameters:
+        - in: path
+          name: concrete_action_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Mixpoints
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MixpointInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MixpointInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MixpointInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MixpointOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/facet-descriptions/{facet_description_id}/:
+    get:
+      operationId: v1_facet_descriptions_retrieve
+      description: Recupera, atualiza e remove uma facet description do usuario.
+      parameters:
+        - in: path
+          name: facet_description_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - FacetDescriptions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacetDescriptionOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_facet_descriptions_partial_update
+      description: Recupera, atualiza e remove uma facet description do usuario.
+      parameters:
+        - in: path
+          name: facet_description_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - FacetDescriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFacetDescriptionPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFacetDescriptionPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFacetDescriptionPartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacetDescriptionOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_facet_descriptions_destroy
+      description: Recupera, atualiza e remove uma facet description do usuario.
+      parameters:
+        - in: path
+          name: facet_description_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - FacetDescriptions
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Facet description deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/facet-descriptions/{facet_description_id}/risks/:
+    get:
+      operationId: v1_facet_descriptions_risks_list
+      description: Lista e cadastra riscos dentro de uma facet description.
+      parameters:
+        - in: path
+          name: facet_description_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Risks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_facet_descriptions_risks_create
+      description: Lista e cadastra riscos dentro de uma facet description.
+      parameters:
+        - in: path
+          name: facet_description_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Risks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RiskInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RiskInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/kref-pratices/{kref_pratice_id}/:
+    get:
+      operationId: v1_kref_pratices_retrieve
+      description: Recupera, atualiza e remove uma pratica KREF do usuario.
+      parameters:
+        - in: path
+          name: kref_pratice_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - KREF Practices
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KrefPraticeOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_kref_pratices_partial_update
+      description: Recupera, atualiza e remove uma pratica KREF do usuario.
+      parameters:
+        - in: path
+          name: kref_pratice_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - KREF Practices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedKrefPraticePartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedKrefPraticePartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedKrefPraticePartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KrefPraticeOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_kref_pratices_destroy
+      description: Recupera, atualiza e remove uma pratica KREF do usuario.
+      parameters:
+        - in: path
+          name: kref_pratice_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - KREF Practices
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: KREF practice deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/mixpoints/{mixpoint_id}/:
+    get:
+      operationId: v1_mixpoints_retrieve
+      description: Recupera, atualiza e remove um mixpoint do usuario.
+      parameters:
+        - in: path
+          name: mixpoint_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Mixpoints
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MixpointOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_mixpoints_partial_update
+      description: Recupera, atualiza e remove um mixpoint do usuario.
+      parameters:
+        - in: path
+          name: mixpoint_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Mixpoints
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMixpointPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMixpointPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMixpointPartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MixpointOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_mixpoints_destroy
+      description: Recupera, atualiza e remove um mixpoint do usuario.
+      parameters:
+        - in: path
+          name: mixpoint_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Mixpoints
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Mixpoint deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
   /api/v1/organizations/:
     get:
       operationId: v1_organizations_list
       description: List and create organizations for the authenticated user.
       tags:
-      - Organizations
+        - Organizations
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -758,7 +1851,7 @@ paths:
       operationId: v1_organizations_create
       description: List and create organizations for the authenticated user.
       tags:
-      - Organizations
+        - Organizations
       requestBody:
         content:
           application/json:
@@ -772,7 +1865,7 @@ paths:
               $ref: '#/components/schemas/OrganizationInputSerializerV1'
         required: true
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '201':
           content:
@@ -804,15 +1897,15 @@ paths:
       description: Retrieve, update and delete one organization for the authenticated
         user.
       parameters:
-      - in: path
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: organization_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Organizations
+        - Organizations
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -843,13 +1936,13 @@ paths:
       description: Retrieve, update and delete one organization for the authenticated
         user.
       parameters:
-      - in: path
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: organization_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Organizations
+        - Organizations
       requestBody:
         content:
           application/json:
@@ -862,7 +1955,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedOrganizationPartialInputSerializerV1'
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '200':
           content:
@@ -905,15 +1998,15 @@ paths:
       description: Retrieve, update and delete one organization for the authenticated
         user.
       parameters:
-      - in: path
-        name: organization_id
-        schema:
-          type: integer
-        required: true
+        - in: path
+          name: organization_id
+          schema:
+            type: integer
+          required: true
       tags:
-      - Organizations
+        - Organizations
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: Organization deleted.
@@ -935,6 +2028,753 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIErrorSerializerV1'
           description: ''
+  /api/v1/organizations/{organization_id}/blaves/:
+    get:
+      operationId: v1_organizations_blaves_list
+      description: Lista e cadastra blaves dentro de uma organizacao.
+      parameters:
+        - in: path
+          name: organization_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Blaves
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_organizations_blaves_create
+      description: Lista e cadastra blaves dentro de uma organizacao.
+      parameters:
+        - in: path
+          name: organization_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Blaves
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BlaveInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlaveOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/risks/{risk_id}/:
+    get:
+      operationId: v1_risks_retrieve
+      description: Recupera, atualiza e remove um risco do usuario.
+      parameters:
+        - in: path
+          name: risk_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Risks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_risks_partial_update
+      description: Recupera, atualiza e remove um risco do usuario.
+      parameters:
+        - in: path
+          name: risk_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Risks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRiskPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRiskPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRiskPartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_risks_destroy
+      description: Recupera, atualiza e remove um risco do usuario.
+      parameters:
+        - in: path
+          name: risk_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Risks
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Risk deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/risks/{risk_id}/kref-pratices/:
+    get:
+      operationId: v1_risks_kref_pratices_list
+      description: Lista e cadastra praticas KREF dentro de um risco.
+      parameters:
+        - in: path
+          name: risk_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - KREF Practices
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KrefPraticeOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_risks_kref_pratices_create
+      description: Lista e cadastra praticas KREF dentro de um risco.
+      parameters:
+        - in: path
+          name: risk_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - KREF Practices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KrefPraticeInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/KrefPraticeInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/KrefPraticeInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KrefPraticeOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/schapters/:
+    get:
+      operationId: v1_schapters_list
+      description: Lista nomes globais de schapters para importacao.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Numero da pagina.
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Quantidade por pagina, limitada a 50.
+      tags:
+        - Schapters
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSchapterGlobalNameSerializerV1List'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/schapters/{schapter_id}/:
+    get:
+      operationId: v1_schapters_retrieve
+      description: Recupera, atualiza e remove uma schapter do usuario autenticado.
+      parameters:
+        - in: path
+          name: schapter_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Schapters
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchapterOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    patch:
+      operationId: v1_schapters_partial_update
+      description: Recupera, atualiza e remove uma schapter do usuario autenticado.
+      parameters:
+        - in: path
+          name: schapter_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Schapters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSchapterPartialInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSchapterPartialInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSchapterPartialInputSerializerV1'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchapterOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    delete:
+      operationId: v1_schapters_destroy
+      description: Recupera, atualiza e remove uma schapter do usuario autenticado.
+      parameters:
+        - in: path
+          name: schapter_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - Schapters
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Schapter deleted.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/schapters/{schapter_id}/facet-descriptions/:
+    get:
+      operationId: v1_schapters_facet_descriptions_list
+      description: Lista e cadastra facet descriptions dentro de uma schapter.
+      parameters:
+        - in: path
+          name: schapter_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - FacetDescriptions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FacetDescriptionOutputSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+    post:
+      operationId: v1_schapters_facet_descriptions_create
+      description: Lista e cadastra facet descriptions dentro de uma schapter.
+      parameters:
+        - in: path
+          name: schapter_id
+          schema:
+            type: integer
+          required: true
+      tags:
+        - FacetDescriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FacetDescriptionInputSerializerV1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FacetDescriptionInputSerializerV1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FacetDescriptionInputSerializerV1'
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FacetDescriptionOutputSerializerV1'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/suggested-boundaries/:
+    get:
+      operationId: v1_suggested_boundaries_list
+      description: Lista boundaries sugeridas gerenciadas pelo software.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Numero da pagina.
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Quantidade por pagina, limitada a 50.
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Busca por nome ou descricao.
+      tags:
+        - Boundaries
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSuggestedBoundaryOutputSerializerV1List'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+  /api/v1/suggested-schapters/:
+    get:
+      operationId: v1_suggested_schapters_list
+      description: Lista schapters sugeridas gerenciadas pelo software.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Numero da pagina.
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+          description: Quantidade por pagina, limitada a 50.
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Busca por nome ou descricao.
+      tags:
+        - Schapters
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSuggestedSchapterOutputSerializerV1List'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIErrorSerializerV1'
+          description: ''
 components:
   schemas:
     APIErrorBodySerializerV1:
@@ -950,18 +2790,26 @@ components:
           readOnly: true
           nullable: true
       required:
-      - code
-      - details
-      - message
+        - code
+        - details
+        - message
     APIErrorSerializerV1:
       type: object
       properties:
         error:
           allOf:
-          - $ref: '#/components/schemas/APIErrorBodySerializerV1'
+            - $ref: '#/components/schemas/APIErrorBodySerializerV1'
           readOnly: true
       required:
-      - error
+        - error
+    AccountGoogleSocialAccountInputSerializerV1:
+      type: object
+      properties:
+        credential:
+          type: string
+          writeOnly: true
+      required:
+        - credential
     AccountOutputSerializerV1:
       type: object
       properties:
@@ -982,6 +2830,11 @@ components:
           type: string
           readOnly: true
           nullable: true
+        social_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialAccountOutputSerializerV1'
+          readOnly: true
         is_active:
           type: boolean
           readOnly: true
@@ -994,12 +2847,31 @@ components:
           readOnly: true
           title: Data de registro
       required:
-      - avatar_type
-      - date_joined
-      - email
-      - id
-      - is_active
-      - username
+        - avatar_type
+        - date_joined
+        - email
+        - id
+        - is_active
+        - social_accounts
+        - username
+    AccountPasswordInputSerializerV1:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        new_password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        password_confirm:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+        - new_password
+        - password_confirm
     AccountRegistrationInputSerializerV1:
       type: object
       properties:
@@ -1024,10 +2896,10 @@ components:
           nullable: true
           maxLength: 64
       required:
-      - email
-      - password
-      - password_confirm
-      - username
+        - email
+        - password
+        - password_confirm
+        - username
     AuthenticationOutputSerializerV1:
       type: object
       description: Serializa os dados de autenticação para a resposta da API.
@@ -1053,12 +2925,12 @@ components:
           format: uuid
           readOnly: true
       required:
-      - access_expires_in
-      - access_token
-      - refresh_expires_at
-      - refresh_token
-      - session_id
-      - token_type
+        - access_expires_in
+        - access_token
+        - refresh_expires_at
+        - refresh_token
+        - session_id
+        - token_type
     AuthenticationSessionOutputSerializerV1:
       type: object
       description: Serializa os dados de uma sessão de autenticação ativa.
@@ -1084,46 +2956,48 @@ components:
           format: date-time
           nullable: true
       required:
-      - created_at
-      - id
-      - is_current
+        - created_at
+        - id
+        - is_current
     BlaveInputSerializerV1:
       type: object
-      description: Valida os dados necessários para cadastrar uma blave.
+      description: Valida os dados usados no cadastro de uma blave.
       properties:
-        organization_id:
-          type: integer
-          minimum: 1
         title:
           type: string
           maxLength: 255
-        description:
-          type: string
-          nullable: true
-          maxLength: 255
+        is_favorite:
+          type: boolean
       required:
-      - organization_id
-      - title
-    BlaveMovementStatusOutputSerializerV1:
+        - title
+    BlaveMovementOutputSerializerV1:
       type: object
-      description: Serializa o status dos movimentos associados a uma blave.
+      description: Serializa o estado de um movimento da blave.
       properties:
+        id:
+          type: integer
+          readOnly: true
         movement:
           $ref: '#/components/schemas/MovementEnum'
         status:
-          $ref: '#/components/schemas/BlaveMovementStatusOutputSerializerV1StatusEnum'
+          $ref: '#/components/schemas/BlaveMovementOutputSerializerV1StatusEnum'
         completed_at:
           type: string
           format: date-time
           nullable: true
+        reopen_at:
+          type: string
+          format: date
+          nullable: true
       required:
-      - movement
-    BlaveMovementStatusOutputSerializerV1StatusEnum:
+        - id
+        - movement
+    BlaveMovementOutputSerializerV1StatusEnum:
       enum:
-      - LOCKED
-      - ACTIVE
-      - COMPLETED
-      - INVALIDATED
+        - LOCKED
+        - ACTIVE
+        - COMPLETED
+        - INVALIDATED
       type: string
       description: |-
         * `LOCKED` - Bloqueado
@@ -1132,36 +3006,38 @@ components:
         * `INVALIDATED` - Invalidado
     BlaveOutputSerializerV1:
       type: object
-      description: Serializa uma blave para consumo da API.
+      description: Serializa uma blave com seus movimentos de navegacao.
       properties:
         id:
           type: integer
           readOnly: true
-        organization_id:
+        organization:
           type: integer
           readOnly: true
-        created_by_user_id:
+        created_by_user:
           type: integer
           readOnly: true
         title:
           type: string
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 255
+          readOnly: true
         status:
-          $ref: '#/components/schemas/StatusCe5Enum'
+          allOf:
+            - $ref: '#/components/schemas/BlaveOutputSerializerV1StatusEnum'
+          readOnly: true
         current_movement:
-          $ref: '#/components/schemas/CurrentMovementEnum'
+          allOf:
+            - $ref: '#/components/schemas/CurrentMovementEnum'
+          readOnly: true
+        is_favorite:
+          type: boolean
+          readOnly: true
         version_number:
           type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        movement_statuses:
+          readOnly: true
+        movements:
           type: array
           items:
-            $ref: '#/components/schemas/BlaveMovementStatusOutputSerializerV1'
+            $ref: '#/components/schemas/BlaveMovementOutputSerializerV1'
           readOnly: true
         created_at:
           type: string
@@ -1172,23 +3048,104 @@ components:
           format: date-time
           readOnly: true
       required:
-      - created_at
-      - created_by_user_id
-      - description
-      - id
-      - movement_statuses
-      - organization_id
-      - title
-      - updated_at
+        - created_at
+        - created_by_user
+        - current_movement
+        - id
+        - is_favorite
+        - movements
+        - organization
+        - status
+        - title
+        - updated_at
+        - version_number
+    BlaveOutputSerializerV1StatusEnum:
+      enum:
+        - DRAFT
+        - IN_PROGRESS
+        - COMPLETED
+        - ARCHIVED
+      type: string
+      description: |-
+        * `DRAFT` - Rascunho
+        * `IN_PROGRESS` - Em andamento
+        * `COMPLETED` - Concluida
+        * `ARCHIVED` - Arquivada
+    BoundaryGlobalNameSerializerV1:
+      type: object
+      description: Serializa nomes globais de boundaries para importacao.
+      properties:
+        name:
+          type: string
+          readOnly: true
+      required:
+        - name
+    BoundaryInputSerializerV1:
+      type: object
+      description: Valida os dados usados no cadastro de uma boundary.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        suggested_boundary_id:
+          type: integer
+        outer_boundary_id:
+          type: integer
+        outer_boundary_name:
+          type: string
+          maxLength: 255
+    BoundaryOutputSerializerV1:
+      type: object
+      description: Serializa uma boundary com sua referencia hierarquica.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        blave:
+          type: integer
+          readOnly: true
+        outer_boundary:
+          type: integer
+          readOnly: true
+          nullable: true
+        suggested_boundary:
+          allOf:
+            - $ref: '#/components/schemas/SuggestedBoundaryOutputSerializerV1'
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - blave
+        - created_at
+        - description
+        - id
+        - name
+        - outer_boundary
+        - suggested_boundary
+        - updated_at
     CurrentMovementEnum:
       enum:
-      - BOUNDGROUND
-      - LABOR
-      - ECHO
-      - NOISECATCH
-      - DRAWBRIDGE
-      - ENHANCE
-      - SIGHTLINE
+        - BOUNDGROUND
+        - LABOR
+        - ECHO
+        - NOISECATCH
+        - DRAWBRIDGE
+        - ENHANCE
+        - SIGHTLINE
       type: string
       description: |-
         * `BOUNDGROUND` - Boundground
@@ -1198,6 +3155,97 @@ components:
         * `DRAWBRIDGE` - Drawbridge
         * `ENHANCE` - Enhance
         * `SIGHTLINE` - Sightline
+    FacetDescriptionInputSerializerV1:
+      type: object
+      description: Valida o cadastro unificado de facet descriptions de uma schapter.
+      properties:
+        facets:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacetDescriptionItemInputSerializerV1'
+      required:
+        - facets
+    FacetDescriptionItemInputSerializerV1:
+      type: object
+      description: Valida uma faceta aninhada do cadastro unificado.
+      properties:
+        facet:
+          $ref: '#/components/schemas/FacetEnum'
+        generate_risk:
+          type: boolean
+          default: true
+        value:
+          type: string
+          maxLength: 255
+        observation:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+        - facet
+        - value
+    FacetDescriptionOutputSerializerV1:
+      type: object
+      description: Serializa uma facet description vinculada a uma schapter.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        schapter:
+          type: integer
+          readOnly: true
+        facet:
+          allOf:
+            - $ref: '#/components/schemas/FacetEnum'
+          readOnly: true
+          default: WHAT
+        generate_risk:
+          type: boolean
+          readOnly: true
+        value:
+          type: string
+          readOnly: true
+        observation:
+          type: string
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - created_at
+        - facet
+        - generate_risk
+        - id
+        - observation
+        - schapter
+        - updated_at
+        - value
+    FacetEnum:
+      enum:
+        - WHAT
+        - WHY
+        - WHEN
+        - WHO
+        - WITH
+        - WHEREBY
+        - IN
+        - OUT
+      type: string
+      description: |-
+        * `WHAT` - What
+        * `WHY` - Why
+        * `WHEN` - When
+        * `WHO` - Who
+        * `WITH` - With
+        * `WHEREBY` - Whereby
+        * `IN` - in
+        * `OUT` - Out
     GoogleLoginInputSerializerV1:
       type: object
       description: Valida a credencial de login emitida pelo Google Identity Services.
@@ -1206,7 +3254,61 @@ components:
           type: string
           writeOnly: true
       required:
-      - credential
+        - credential
+    KrefPraticeInputSerializerV1:
+      type: object
+      description: Valida o cadastro unificado de praticas KREF de um risco.
+      properties:
+        kref_pratices:
+          type: array
+          items:
+            $ref: '#/components/schemas/KrefPraticeItemInputSerializerV1'
+      required:
+        - kref_pratices
+    KrefPraticeItemInputSerializerV1:
+      type: object
+      description: Valida uma pratica KREF aninhada do cadastro unificado.
+      properties:
+        pratice:
+          type: string
+          maxLength: 255
+        references:
+          type: string
+          maxLength: 255
+      required:
+        - pratice
+        - references
+    KrefPraticeOutputSerializerV1:
+      type: object
+      description: Serializa uma pratica KREF vinculada a um risco.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        risk:
+          type: integer
+          readOnly: true
+        pratice:
+          type: string
+          readOnly: true
+        references:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - created_at
+        - id
+        - pratice
+        - references
+        - risk
+        - updated_at
     LoginInputSerializerV1:
       type: object
       description: Valida o identificador e a senha usados para autenticação.
@@ -1220,17 +3322,63 @@ components:
           writeOnly: true
           maxLength: 128
       required:
-      - identifier
-      - password
+        - identifier
+        - password
+    MixpointInputSerializerV1:
+      type: object
+      description: Valida o cadastro em lote de mixpoints de uma acao concreta.
+      properties:
+        mixpoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/MixpointItemInputSerializerV1'
+      required:
+        - mixpoints
+    MixpointItemInputSerializerV1:
+      type: object
+      description: Valida um mixpoint aninhado do cadastro em lote.
+      properties:
+        description:
+          type: string
+          maxLength: 255
+      required:
+        - description
+    MixpointOutputSerializerV1:
+      type: object
+      description: Serializa um mixpoint vinculado a uma acao concreta.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        concrete_action:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - concrete_action
+        - created_at
+        - description
+        - id
+        - updated_at
     MovementEnum:
       enum:
-      - BOUNDGROUND
-      - LABOR
-      - ECHO
-      - NOISECATCH
-      - DRAWBRIDGE
-      - ENHANCE
-      - SIGHTLINE
+        - BOUNDGROUND
+        - LABOR
+        - ECHO
+        - NOISECATCH
+        - DRAWBRIDGE
+        - ENHANCE
+        - SIGHTLINE
       type: string
       description: |-
         * `BOUNDGROUND` - Boundground
@@ -1250,7 +3398,7 @@ components:
           type: string
           nullable: true
       required:
-      - name
+        - name
     OrganizationOutputSerializerV1:
       type: object
       properties:
@@ -1274,10 +3422,102 @@ components:
           format: date-time
           readOnly: true
       required:
-      - created_at
-      - id
-      - name
-      - updated_at
+        - created_at
+        - id
+        - name
+        - updated_at
+    PaginatedBoundaryGlobalNameSerializerV1List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoundaryGlobalNameSerializerV1'
+    PaginatedSchapterGlobalNameSerializerV1List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchapterGlobalNameSerializerV1'
+    PaginatedSuggestedBoundaryOutputSerializerV1List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestedBoundaryOutputSerializerV1'
+    PaginatedSuggestedSchapterOutputSerializerV1List:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestedSchapterOutputSerializerV1'
     PatchedAccountPartialInputSerializerV1:
       type: object
       properties:
@@ -1295,19 +3535,59 @@ components:
           maxLength: 64
     PatchedBlavePartialInputSerializerV1:
       type: object
-      description: Valida os dados permitidos para alterar uma blave.
+      description: Valida os dados permitidos na atualizacao parcial de uma blave.
       properties:
         title:
           type: string
           maxLength: 255
+        is_favorite:
+          type: boolean
+    PatchedBoundaryPartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de uma boundary.
+      properties:
+        name:
+          type: string
+          maxLength: 255
         description:
+          type: string
+        suggested_boundary_id:
+          type: integer
+          nullable: true
+        outer_boundary_id:
+          type: integer
+          nullable: true
+    PatchedFacetDescriptionPartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de uma faceta.
+      properties:
+        generate_risk:
+          type: boolean
+        value:
+          type: string
+          maxLength: 255
+        observation:
           type: string
           nullable: true
           maxLength: 255
-        status:
-          $ref: '#/components/schemas/StatusCe5Enum'
-        current_movement:
-          $ref: '#/components/schemas/CurrentMovementEnum'
+    PatchedKrefPraticePartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de uma pratica
+        KREF.
+      properties:
+        pratice:
+          type: string
+          maxLength: 255
+        references:
+          type: string
+          maxLength: 255
+    PatchedMixpointPartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de um mixpoint.
+      properties:
+        description:
+          type: string
+          maxLength: 255
     PatchedOrganizationPartialInputSerializerV1:
       type: object
       properties:
@@ -1317,6 +3597,41 @@ components:
         description:
           type: string
           nullable: true
+    PatchedRiskPartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de um risco.
+      properties:
+        formated_text:
+          type: string
+          maxLength: 255
+        strategic_impact:
+          type: string
+          maxLength: 255
+        operational_impact:
+          type: string
+          maxLength: 255
+        tactical_impact:
+          type: string
+          maxLength: 255
+    PatchedSchapterPartialInputSerializerV1:
+      type: object
+      description: Valida os dados permitidos na atualizacao parcial de uma schapter.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        suggested_schapter_id:
+          type: integer
+          nullable: true
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchapterRoleInputSerializerV1'
+    ProviderEnum:
+      enum:
+        - google
+      type: string
+      description: '* `google` - Google'
     RefreshTokenInputSerializerV1:
       type: object
       description: Valida o token de refresh usado para obter um novo access token.
@@ -1326,19 +3641,269 @@ components:
           writeOnly: true
           maxLength: 256
       required:
-      - refresh_token
-    StatusCe5Enum:
+        - refresh_token
+    RiskInputSerializerV1:
+      type: object
+      description: Valida o cadastro unificado de riscos de uma facet description.
+      properties:
+        risks:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskItemInputSerializerV1'
+      required:
+        - risks
+    RiskItemInputSerializerV1:
+      type: object
+      description: Valida um risco aninhado do cadastro unificado.
+      properties:
+        formated_text:
+          type: string
+          maxLength: 255
+        strategic_impact:
+          type: string
+          maxLength: 255
+        operational_impact:
+          type: string
+          maxLength: 255
+        tactical_impact:
+          type: string
+          maxLength: 255
+      required:
+        - formated_text
+        - operational_impact
+        - strategic_impact
+        - tactical_impact
+    RiskOutputSerializerV1:
+      type: object
+      description: Serializa um risco vinculado a uma facet description.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        facet_description:
+          type: integer
+          readOnly: true
+        formated_text:
+          type: string
+          readOnly: true
+        strategic_impact:
+          type: string
+          readOnly: true
+        operational_impact:
+          type: string
+          readOnly: true
+        tactical_impact:
+          type: string
+          readOnly: true
+        priority_position:
+          type: integer
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - created_at
+        - facet_description
+        - formated_text
+        - id
+        - operational_impact
+        - priority_position
+        - strategic_impact
+        - tactical_impact
+        - updated_at
+    SchapterGlobalNameSerializerV1:
+      type: object
+      description: Serializa nomes globais de schapters para importacao.
+      properties:
+        name:
+          type: string
+          readOnly: true
+      required:
+        - name
+    SchapterInputSerializerV1:
+      type: object
+      description: Valida os dados usados no cadastro unificado de uma schapter.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        suggested_schapter_id:
+          type: integer
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchapterRoleInputSerializerV1'
+      required:
+        - roles
+    SchapterOutputSerializerV1:
+      type: object
+      description: Serializa uma schapter com suas roles de execucao.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        boundary:
+          type: integer
+          readOnly: true
+        suggested_schapter:
+          allOf:
+            - $ref: '#/components/schemas/SuggestedSchapterOutputSerializerV1'
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchapterRoleOutputSerializerV1'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - boundary
+        - created_at
+        - id
+        - name
+        - roles
+        - suggested_schapter
+        - updated_at
+    SchapterRoleInputSerializerV1:
+      type: object
+      description: Valida a role aninhada usada no cadastro de schapters.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        type:
+          allOf:
+            - $ref: '#/components/schemas/TypeEnum'
+          default: ROLE
+      required:
+        - name
+    SchapterRoleOutputSerializerV1:
+      type: object
+      description: Serializa roles que executam uma schapter.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        type:
+          allOf:
+            - $ref: '#/components/schemas/TypeEnum'
+          readOnly: true
+      required:
+        - id
+        - name
+        - type
+    SocialAccountOutputSerializerV1:
+      type: object
+      properties:
+        provider:
+          allOf:
+            - $ref: '#/components/schemas/ProviderEnum'
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        email_verified:
+          type: boolean
+          readOnly: true
+        can_unlink:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - can_unlink
+        - created_at
+        - email
+        - email_verified
+        - provider
+        - updated_at
+    SuggestedBoundaryOutputSerializerV1:
+      type: object
+      description: Serializa sugestoes de boundaries gerenciadas pelo software.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - created_at
+        - description
+        - id
+        - name
+        - updated_at
+    SuggestedSchapterOutputSerializerV1:
+      type: object
+      description: Serializa sugestoes de schapters gerenciadas pelo software.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - created_at
+        - description
+        - id
+        - name
+        - updated_at
+    TypeEnum:
       enum:
-      - DRAFT
-      - IN_PROGRESS
-      - COMPLETED
-      - ARCHIVED
+        - ROLE
+        - GROUP
       type: string
       description: |-
-        * `DRAFT` - Rascunho
-        * `IN_PROGRESS` - Em andamento
-        * `COMPLETED` - Concluida
-        * `ARCHIVED` - Arquivada
+        * `ROLE` - Role
+        * `GROUP` - Group
   securitySchemes:
     bearerAuth:
       type: http

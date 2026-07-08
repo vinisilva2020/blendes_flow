@@ -9,6 +9,7 @@ from apps.blendes_flow.exceptions.boundaries import (
     BoundaryMovementNotAllowedError,
     BoundaryNotFoundError,
     BoundaryOuterNotFoundError,
+    BoundarySuggestionNotFoundError,
 )
 from apps.blendes_flow.models import Boundary, Movement
 from apps.blendes_flow.querysets.boundaries import (
@@ -16,6 +17,8 @@ from apps.blendes_flow.querysets.boundaries import (
     boundary_in_blave_queryset,
     boundary_name_queryset,
     global_boundary_names_queryset,
+    suggested_boundaries_queryset,
+    suggested_boundary_queryset,
     user_boundary_queryset,
     user_owned_blave_for_boundaries_queryset,
 )
@@ -59,10 +62,26 @@ def _get_user_boundary(user, boundary_id):
 
 def _get_outer_boundary(blave, outer_boundary_id):
     """Busca uma boundary pai dentro da mesma blave."""
-    outer_boundary = boundary_in_blave_queryset(blave).filter(id=outer_boundary_id).first()
+    outer_boundary = (
+        boundary_in_blave_queryset(blave).filter(id=outer_boundary_id).first()
+    )
     if outer_boundary is None:
         raise BoundaryOuterNotFoundError
     return outer_boundary
+
+
+def _get_suggested_boundary(suggested_boundary_id):
+    """Busca uma sugestao de boundary gerenciada pelo software."""
+    suggested_boundary = (
+        suggested_boundary_queryset()
+        .filter(
+            id=suggested_boundary_id,
+        )
+        .first()
+    )
+    if suggested_boundary is None:
+        raise BoundarySuggestionNotFoundError
+    return suggested_boundary
 
 
 def _ensure_name_available(blave, name, ignored_boundary_id=None):
@@ -100,6 +119,11 @@ def list_global_boundary_names_service():
     return global_boundary_names_queryset()
 
 
+def list_suggested_boundaries_service(search=None):
+    """Lista sugestoes de boundaries com paginacao aplicada na view."""
+    return suggested_boundaries_queryset(search=search)
+
+
 def get_boundary_service(user, boundary_id, **_scope):
     """Retorna uma boundary da blave acessivel ao usuario."""
     return _get_user_boundary(user=user, boundary_id=boundary_id)
@@ -109,8 +133,9 @@ def get_boundary_service(user, boundary_id, **_scope):
 def create_boundary_service(
     user,
     blave_id,
-    name,
+    name=None,
     description="",
+    suggested_boundary_id=None,
     outer_boundary_id=None,
     outer_boundary_name=None,
     **_scope,
@@ -121,6 +146,17 @@ def create_boundary_service(
         blave_id=blave_id,
     )
     _ensure_boundground(blave)
+
+    suggested_boundary = None
+    if suggested_boundary_id is not None:
+        suggested_boundary = _get_suggested_boundary(
+            suggested_boundary_id=suggested_boundary_id,
+        )
+        if not name:
+            name = suggested_boundary.name
+        if not description:
+            description = suggested_boundary.description
+
     _ensure_name_available(blave=blave, name=name)
 
     outer_boundary = None
@@ -141,6 +177,7 @@ def create_boundary_service(
     boundary = Boundary(
         blave=blave,
         outer_boundary=outer_boundary,
+        suggested_boundary=suggested_boundary,
         name=name,
         description=description,
     )
@@ -155,6 +192,7 @@ def update_boundary_service(
     boundary_id,
     name=None,
     description=None,
+    suggested_boundary_id=UNSET,
     outer_boundary_id=UNSET,
     **_scope,
 ):
@@ -173,6 +211,15 @@ def update_boundary_service(
 
     if description is not None:
         boundary.description = description
+
+    if suggested_boundary_id is not UNSET:
+        if suggested_boundary_id is None:
+            suggested_boundary = None
+        else:
+            suggested_boundary = _get_suggested_boundary(
+                suggested_boundary_id=suggested_boundary_id,
+            )
+        boundary.suggested_boundary = suggested_boundary
 
     if outer_boundary_id is not UNSET:
         if outer_boundary_id is None:

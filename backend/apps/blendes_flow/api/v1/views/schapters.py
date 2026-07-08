@@ -1,10 +1,13 @@
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.authentication.api.v1.serializers import APIErrorSerializerV1
+from apps.blendes_flow.common.pagination import (
+    SmallResultsPagination,
+    suggested_list_parameters,
+)
 from apps.blendes_flow.common.throttles.schapter import (
     SchapterGlobalListRateThrottle,
     SchapterManagementRateThrottle,
@@ -15,6 +18,7 @@ from apps.blendes_flow.serializers.schapters import (
     SchapterInputSerializerV1,
     SchapterOutputSerializerV1,
     SchapterPartialInputSerializerV1,
+    SuggestedSchapterOutputSerializerV1,
 )
 from apps.blendes_flow.services.schapters import (
     create_schapter_service,
@@ -22,16 +26,9 @@ from apps.blendes_flow.services.schapters import (
     get_schapter_service,
     list_global_schapter_names_service,
     list_schapters_service,
+    list_suggested_schapters_service,
     update_schapter_service,
 )
-
-
-class SchapterGlobalPagination(PageNumberPagination):
-    """Pagina nomes globais de schapters com limite pequeno."""
-
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 10
 
 
 class SchaptersAPIViewV1(SchapterAPIView):
@@ -156,7 +153,7 @@ class SchapterGlobalNamesAPIViewV1(SchapterAPIView):
 
     permission_classes = [IsAuthenticated]
     throttle_classes = [SchapterGlobalListRateThrottle]
-    pagination_class = SchapterGlobalPagination
+    pagination_class = SmallResultsPagination
 
     @extend_schema(
         tags=["Schapters"],
@@ -169,7 +166,7 @@ class SchapterGlobalNamesAPIViewV1(SchapterAPIView):
             ),
             OpenApiParameter(
                 name="page_size",
-                description="Quantidade por pagina, limitada a 10.",
+                description="Quantidade por pagina, limitada a 50.",
                 required=False,
                 type=int,
             ),
@@ -185,4 +182,30 @@ class SchapterGlobalNamesAPIViewV1(SchapterAPIView):
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(names, request, view=self)
         serializer = SchapterGlobalNameSerializerV1(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
+class SuggestedSchaptersAPIViewV1(SchapterAPIView):
+    """Lista schapters sugeridas gerenciadas pelo software."""
+
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [SchapterGlobalListRateThrottle]
+    pagination_class = SmallResultsPagination
+
+    @extend_schema(
+        tags=["Schapters"],
+        parameters=suggested_list_parameters(),
+        responses={
+            200: SuggestedSchapterOutputSerializerV1(many=True),
+            401: APIErrorSerializerV1,
+            429: APIErrorSerializerV1,
+        },
+    )
+    def get(self, request):
+        suggested_schapters = list_suggested_schapters_service(
+            search=request.query_params.get("search"),
+        )
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(suggested_schapters, request, view=self)
+        serializer = SuggestedSchapterOutputSerializerV1(page, many=True)
         return paginator.get_paginated_response(serializer.data)

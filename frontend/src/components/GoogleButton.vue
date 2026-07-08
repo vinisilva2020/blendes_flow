@@ -3,6 +3,7 @@ import googleLogo from '@/assets/img/google.svg'
 
 const props = defineProps<{
   isPending?: boolean
+  label?: string
 }>()
 
 const emit = defineEmits<{
@@ -12,7 +13,6 @@ const emit = defineEmits<{
 
 const googleScriptUrl = 'https://accounts.google.com/gsi/client'
 let googleScriptPromise: Promise<void> | null = null
-let isGoogleInitialized = false
 
 type GoogleCredentialResponse = {
   credential?: string
@@ -61,10 +61,7 @@ async function requestGoogleCredential() {
     const credential = await promptGoogleCredential(clientId)
     emit('credential', credential)
   } catch (error) {
-    emit(
-      'error',
-      error instanceof Error ? error.message : 'Unable to sign in with Google.',
-    )
+    emit('error', error instanceof Error ? error.message : 'Unable to sign in with Google.')
   }
 }
 
@@ -99,26 +96,23 @@ function promptGoogleCredential(clientId: string) {
 
     let settled = false
 
-    if (!isGoogleInitialized) {
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: (response) => {
-          if (settled) {
-            return
-          }
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      callback: (response) => {
+        if (settled) {
+          return
+        }
 
-          settled = true
+        settled = true
 
-          if (response.credential) {
-            resolve(response.credential)
-            return
-          }
+        if (response.credential) {
+          resolve(response.credential)
+          return
+        }
 
-          reject(new Error('Google did not return a credential.'))
-        },
-      })
-      isGoogleInitialized = true
-    }
+        reject(new Error('Google did not return a credential.'))
+      },
+    })
 
     window.google.accounts.id.prompt((notification) => {
       if (settled) {
@@ -128,18 +122,14 @@ function promptGoogleCredential(clientId: string) {
       if (notification.isNotDisplayed()) {
         settled = true
         reject(
-          new Error(
-            `Google sign in was not displayed: ${notification.getNotDisplayedReason()}.`,
-          ),
+          new Error(`Google sign in was not displayed: ${notification.getNotDisplayedReason()}.`),
         )
         return
       }
 
       if (notification.isSkippedMoment()) {
         settled = true
-        reject(
-          new Error(`Google sign in was skipped: ${notification.getSkippedReason()}.`),
-        )
+        reject(new Error(`Google sign in was skipped: ${notification.getSkippedReason()}.`))
         return
       }
 
@@ -159,6 +149,6 @@ function promptGoogleCredential(clientId: string) {
     @click="requestGoogleCredential"
   >
     <img class="block size-5" :src="googleLogo" alt="" aria-hidden="true" />
-    <span>Entrar com Google</span>
+    <span>{{ label ?? 'Entrar com Google' }}</span>
   </button>
 </template>

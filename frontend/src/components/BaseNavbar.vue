@@ -24,7 +24,7 @@ function closeMobileMenu() {
     <div class="navbar-start">
       <a class="brand" href="#home" aria-label="Blendes Flow home" @click="closeMobileMenu">
         <Blend class="brand-icon" :size="20" :stroke-width="2.2" aria-hidden="true" />
-        <span>Blendes Flow</span>
+        <span class="brand-title">Blendes Flow</span>
       </a>
 
       <div class="nav-links" aria-label="Main sections">
@@ -108,6 +108,7 @@ function closeMobileMenu() {
   display: flex;
   align-items: center;
   gap: clamp(28px, 5vw, 76px);
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -162,11 +163,13 @@ function closeMobileMenu() {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex: 0 1 auto;
   min-height: 40px;
+  max-width: min(100%, 230px);
   font-size: clamp(1.18rem, 1.55vw, 1.42rem);
   font-weight: 800;
   line-height: 1;
-  text-wrap: balance;
+  white-space: nowrap;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
@@ -175,6 +178,12 @@ function closeMobileMenu() {
 .brand-icon {
   flex: 0 0 auto;
   color: #aeeeff;
+}
+
+.brand-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-links {

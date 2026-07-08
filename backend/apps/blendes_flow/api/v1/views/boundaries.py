@@ -1,10 +1,13 @@
 from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.authentication.api.v1.serializers import APIErrorSerializerV1
+from apps.blendes_flow.common.pagination import (
+    SmallResultsPagination,
+    suggested_list_parameters,
+)
 from apps.blendes_flow.common.throttles.boundary import (
     BoundaryGlobalListRateThrottle,
     BoundaryManagementRateThrottle,
@@ -15,6 +18,7 @@ from apps.blendes_flow.serializers.boundaries import (
     BoundaryInputSerializerV1,
     BoundaryOutputSerializerV1,
     BoundaryPartialInputSerializerV1,
+    SuggestedBoundaryOutputSerializerV1,
 )
 from apps.blendes_flow.services.boundaries import (
     create_boundary_service,
@@ -22,16 +26,9 @@ from apps.blendes_flow.services.boundaries import (
     get_boundary_service,
     list_boundaries_service,
     list_global_boundary_names_service,
+    list_suggested_boundaries_service,
     update_boundary_service,
 )
-
-
-class BoundaryGlobalPagination(PageNumberPagination):
-    """Pagina nomes globais de boundaries com limite pequeno."""
-
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 10
 
 
 class BoundariesAPIViewV1(BoundaryAPIView):
@@ -156,7 +153,7 @@ class BoundaryGlobalNamesAPIViewV1(BoundaryAPIView):
 
     permission_classes = [IsAuthenticated]
     throttle_classes = [BoundaryGlobalListRateThrottle]
-    pagination_class = BoundaryGlobalPagination
+    pagination_class = SmallResultsPagination
 
     @extend_schema(
         tags=["Boundaries"],
@@ -169,7 +166,7 @@ class BoundaryGlobalNamesAPIViewV1(BoundaryAPIView):
             ),
             OpenApiParameter(
                 name="page_size",
-                description="Quantidade por pagina, limitada a 10.",
+                description="Quantidade por pagina, limitada a 50.",
                 required=False,
                 type=int,
             ),
@@ -185,4 +182,30 @@ class BoundaryGlobalNamesAPIViewV1(BoundaryAPIView):
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(names, request, view=self)
         serializer = BoundaryGlobalNameSerializerV1(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
+class SuggestedBoundariesAPIViewV1(BoundaryAPIView):
+    """Lista boundaries sugeridas gerenciadas pelo software."""
+
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [BoundaryGlobalListRateThrottle]
+    pagination_class = SmallResultsPagination
+
+    @extend_schema(
+        tags=["Boundaries"],
+        parameters=suggested_list_parameters(),
+        responses={
+            200: SuggestedBoundaryOutputSerializerV1(many=True),
+            401: APIErrorSerializerV1,
+            429: APIErrorSerializerV1,
+        },
+    )
+    def get(self, request):
+        suggested_boundaries = list_suggested_boundaries_service(
+            search=request.query_params.get("search"),
+        )
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(suggested_boundaries, request, view=self)
+        serializer = SuggestedBoundaryOutputSerializerV1(page, many=True)
         return paginator.get_paginated_response(serializer.data)

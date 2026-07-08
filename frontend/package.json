@@ -22,10 +22,12 @@
     "@tanstack/vue-query": "^5.101.0",
     "@vue-flow/core": "^1.48.2",
     "axios": "^1.18.0",
+    "chart.js": "^4.5.1",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.3.1",
     "vue": "^3.5.38",
-    "vue-router": "^5.1.0"
+    "vue-router": "^5.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",

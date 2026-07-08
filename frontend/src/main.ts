@@ -7,6 +7,7 @@ import App from './App.vue'
 import { installServerState } from './lib/query/install'
 import router from './router'
 import { useAuthenticationStore } from './stores/authentication'
+import { usePreferencesStore } from './stores/preferences'
 import { useWorkspaceStore } from './stores/workspace'
 
 const app = createApp(App)
@@ -16,6 +17,7 @@ app.use(pinia)
 installServerState(app)
 
 const authenticationStore = useAuthenticationStore(pinia)
+usePreferencesStore(pinia)
 const workspaceStore = useWorkspaceStore(pinia)
 
 authenticationStore
