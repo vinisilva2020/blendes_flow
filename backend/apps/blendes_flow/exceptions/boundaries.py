@@ -46,6 +46,13 @@ class BoundaryOuterNotFoundError(BoundaryDomainError):
     message = "Outer boundary not found"
 
 
+class BoundarySuggestionNotFoundError(BoundaryDomainError):
+    """Excecao para sugestao de boundary inexistente."""
+
+    code = "boundary_suggestion_not_found"
+    message = "Suggested boundary not found"
+
+
 class BoundaryInvalidParentError(BoundaryDomainError):
     """Excecao para relacionamento hierarquico invalido."""
 

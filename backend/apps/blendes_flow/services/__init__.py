@@ -13,6 +13,7 @@ from apps.blendes_flow.services.boundaries import (
     get_boundary_service,
     list_boundaries_service,
     list_global_boundary_names_service,
+    list_suggested_boundaries_service,
     update_boundary_service,
 )
 from apps.blendes_flow.services.facet_descriptions import (
@@ -49,6 +50,7 @@ from apps.blendes_flow.services.schapters import (
     get_schapter_service,
     list_global_schapter_names_service,
     list_schapters_service,
+    list_suggested_schapters_service,
     update_schapter_service,
 )
 
@@ -81,6 +83,8 @@ __all__ = [
     "list_risks_service",
     "list_global_boundary_names_service",
     "list_global_schapter_names_service",
+    "list_suggested_boundaries_service",
+    "list_suggested_schapters_service",
     "list_schapters_service",
     "create_schapter_service",
     "update_blave_service",

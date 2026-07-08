@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 
 import {
   createOrganization,
@@ -22,11 +23,20 @@ export function useOrganizations(enabled = true) {
   })
 }
 
-export function useOrganization(organizationId: number, enabled = true) {
+export function useOrganization(
+  organizationId: MaybeRefOrGetter<number | null>,
+  enabled: MaybeRefOrGetter<boolean> = true,
+) {
+  const resolvedOrganizationId = computed(() => toValue(organizationId))
+
   return useQuery({
-    enabled,
-    queryKey: organizationKeys.detail(organizationId),
-    queryFn: () => getOrganization(organizationId),
+    enabled: computed(() => toValue(enabled) && resolvedOrganizationId.value !== null),
+    queryKey: computed(() =>
+      resolvedOrganizationId.value === null
+        ? [...organizationKeys.all, 'detail', 'current']
+        : organizationKeys.detail(resolvedOrganizationId.value),
+    ),
+    queryFn: () => getOrganization(resolvedOrganizationId.value!),
   })
 }
 
@@ -45,8 +55,13 @@ export function useUpdateOrganizationMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ organizationId, data }: { organizationId: number; data: Parameters<typeof updateOrganization>[1] }) =>
-      updateOrganization(organizationId, data),
+    mutationFn: ({
+      organizationId,
+      data,
+    }: {
+      organizationId: number
+      data: Parameters<typeof updateOrganization>[1]
+    }) => updateOrganization(organizationId, data),
     onSuccess: (organization) => {
       void queryClient.invalidateQueries({ queryKey: organizationKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: organizationKeys.detail(organization.id) })

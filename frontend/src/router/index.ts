@@ -49,9 +49,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/canvas',
+      path: '/canvas/:blaveId',
       name: 'canvas',
-      component: () => import('../views/canvas/Canvas.vue'),
+      component: () => import('../views/canvasV2/Canvas.vue'),
       meta: {
         requiresAuth: true,
       },
@@ -60,6 +60,51 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/dashboard/Index.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
+    },
+    {
+      path: '/flows',
+      name: 'flows',
+      component: () => import('../views/dashboard/Flows.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
+    },
+    {
+      path: '/company',
+      name: 'company',
+      component: () => import('../views/dashboard/Company.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
+    },
+    {
+      path: '/metrics',
+      name: 'metrics',
+      component: () => import('../views/dashboard/Metrics.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/dashboard/Profile.vue'),
+      meta: {
+        requiresAuth: true,
+        requiresWorkspace: true,
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/dashboard/Settings.vue'),
       meta: {
         requiresAuth: true,
         requiresWorkspace: true,

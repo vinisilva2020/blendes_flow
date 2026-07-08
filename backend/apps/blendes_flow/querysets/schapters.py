@@ -1,4 +1,6 @@
-from apps.blendes_flow.models import Boundary, Schapter
+from django.db.models import Q
+
+from apps.blendes_flow.models import Boundary, Schapter, SuggestedSchapter
 
 
 def boundary_in_blave_queryset(blave):
@@ -19,6 +21,7 @@ def user_schapter_queryset(user):
     return (
         Schapter.objects.select_related(
             "boundary",
+            "suggested_schapter",
             "boundary__blave",
             "boundary__blave__organization",
         )
@@ -33,7 +36,11 @@ def user_schapter_queryset(user):
 def schapter_in_boundary_queryset(boundary):
     """Busca schapters dentro da boundary com roles pre-carregadas."""
     return (
-        Schapter.objects.select_related("boundary", "boundary__blave")
+        Schapter.objects.select_related(
+            "boundary",
+            "suggested_schapter",
+            "boundary__blave",
+        )
         .prefetch_related("roles")
         .filter(boundary=boundary)
     )
@@ -43,7 +50,7 @@ def boundary_schapters_queryset(boundary):
     """Lista schapters da boundary evitando N+1 em boundary/blave/roles."""
     return (
         Schapter.objects.filter(boundary=boundary)
-        .select_related("boundary", "boundary__blave")
+        .select_related("boundary", "suggested_schapter", "boundary__blave")
         .prefetch_related("roles")
     )
 
@@ -56,3 +63,26 @@ def global_schapter_names_queryset():
 def schapter_name_queryset(boundary, name):
     """Centraliza a busca por nome para validar duplicidade na boundary."""
     return Schapter.objects.filter(boundary=boundary, name=name)
+
+
+def suggested_schapters_queryset(search=None):
+    """Lista sugestoes de schapter com colunas minimas e busca simples."""
+    queryset = SuggestedSchapter.objects.only(
+        "id",
+        "name",
+        "description",
+        "created_at",
+        "updated_at",
+    ).order_by("name", "id")
+
+    if search:
+        queryset = queryset.filter(
+            Q(name__icontains=search) | Q(description__icontains=search)
+        )
+
+    return queryset
+
+
+def suggested_schapter_queryset():
+    """Centraliza consultas por sugestao de schapter."""
+    return SuggestedSchapter.objects.only("id", "name", "description")

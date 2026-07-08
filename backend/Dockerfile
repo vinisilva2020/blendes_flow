@@ -37,7 +37,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONFAULTHANDLER=1 \
     PATH="/opt/venv/bin:${PATH}" \
     DJANGO_SETTINGS_MODULE="configuration.settings.beta" \
-    GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000 --workers=3 --threads=2 --worker-tmp-dir=/dev/shm --timeout=60 --graceful-timeout=30 --keep-alive=5 --max-requests=1000 --max-requests-jitter=100 --no-control-socket --access-logfile=- --error-logfile=- --capture-output"
+    GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000 --workers=3 --threads=2 --worker-tmp-dir=/dev/shm --timeout=60 --graceful-timeout=30 --keep-alive=5 --max-requests=1000 --max-requests-jitter=100 --access-logfile=- --error-logfile=- --capture-output"
 
 WORKDIR /app
 
