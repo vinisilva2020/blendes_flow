@@ -3,7 +3,6 @@ from itertools import count
 from apps.organizations.models import Organization
 from tests.authentication.factories import create_user
 
-
 _organization_counter = count(1)
 
 

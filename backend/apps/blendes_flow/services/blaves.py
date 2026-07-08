@@ -36,9 +36,13 @@ def _get_user_owned_blave(user, organization_id, blave_id):
         user=user,
         organization_id=organization_id,
     )
-    blave = user_owned_blave_in_organization_queryset(organization).filter(
-        id=blave_id,
-    ).first()
+    blave = (
+        user_owned_blave_in_organization_queryset(organization)
+        .filter(
+            id=blave_id,
+        )
+        .first()
+    )
 
     if blave is None:
         raise BlaveNotFoundError
