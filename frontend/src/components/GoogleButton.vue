@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import googleLogo from '@/assets/img/google.svg'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps<{
   isPending?: boolean
@@ -13,17 +13,11 @@ const emit = defineEmits<{
 
 const googleScriptUrl = 'https://accounts.google.com/gsi/client'
 let googleScriptPromise: Promise<void> | null = null
+const buttonContainer = ref<HTMLElement | null>(null)
+const isInitializing = ref(true)
 
 type GoogleCredentialResponse = {
   credential?: string
-}
-
-type GooglePromptMomentNotification = {
-  getNotDisplayedReason: () => string
-  getSkippedReason: () => string
-  isDismissedMoment: () => boolean
-  isNotDisplayed: () => boolean
-  isSkippedMoment: () => boolean
 }
 
 type GoogleIdentityServices = {
@@ -33,7 +27,18 @@ type GoogleIdentityServices = {
         callback: (response: GoogleCredentialResponse) => void
         client_id: string
       }) => void
-      prompt: (callback: (notification: GooglePromptMomentNotification) => void) => void
+      renderButton: (
+        parent: HTMLElement,
+        options: {
+          locale: string
+          shape: 'rectangular'
+          size: 'large'
+          text: 'continue_with' | 'signin_with'
+          theme: 'outline'
+          type: 'standard'
+          width: number
+        },
+      ) => void
     }
   }
 }
@@ -41,27 +46,6 @@ type GoogleIdentityServices = {
 declare global {
   interface Window {
     google?: GoogleIdentityServices
-  }
-}
-
-async function requestGoogleCredential() {
-  if (props.isPending) {
-    return
-  }
-
-  const clientId = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID
-
-  if (!clientId) {
-    emit('error', 'Google sign in is not configured.')
-    return
-  }
-
-  try {
-    await loadGoogleScript()
-    const credential = await promptGoogleCredential(clientId)
-    emit('credential', credential)
-  } catch (error) {
-    emit('error', error instanceof Error ? error.message : 'Unable to sign in with Google.')
   }
 }
 
@@ -80,75 +64,94 @@ function loadGoogleScript() {
     script.async = true
     script.defer = true
     script.onload = () => resolve()
-    script.onerror = () => reject(new Error('Unable to load Google sign in.'))
+    script.onerror = () => {
+      googleScriptPromise = null
+      script.remove()
+      reject(new Error('Unable to load Google sign in.'))
+    }
     document.head.appendChild(script)
   })
 
   return googleScriptPromise
 }
 
-function promptGoogleCredential(clientId: string) {
-  return new Promise<string>((resolve, reject) => {
-    if (!window.google?.accounts.id) {
-      reject(new Error('Google sign in is unavailable.'))
-      return
+function handleCredential(response: GoogleCredentialResponse) {
+  if (response.credential) {
+    emit('credential', response.credential)
+    return
+  }
+
+  emit('error', 'Google did not return a credential.')
+}
+
+onMounted(async () => {
+  const clientId = import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID
+
+  if (!clientId) {
+    isInitializing.value = false
+    emit('error', 'Google sign in is not configured.')
+    return
+  }
+
+  try {
+    await loadGoogleScript()
+
+    const googleIdentity = window.google?.accounts.id
+    const container = buttonContainer.value
+
+    if (!googleIdentity || !container) {
+      throw new Error('Google sign in is unavailable.')
     }
 
-    let settled = false
-
-    window.google.accounts.id.initialize({
+    googleIdentity.initialize({
       client_id: clientId,
-      callback: (response) => {
-        if (settled) {
-          return
-        }
-
-        settled = true
-
-        if (response.credential) {
-          resolve(response.credential)
-          return
-        }
-
-        reject(new Error('Google did not return a credential.'))
-      },
+      callback: handleCredential,
     })
-
-    window.google.accounts.id.prompt((notification) => {
-      if (settled) {
-        return
-      }
-
-      if (notification.isNotDisplayed()) {
-        settled = true
-        reject(
-          new Error(`Google sign in was not displayed: ${notification.getNotDisplayedReason()}.`),
-        )
-        return
-      }
-
-      if (notification.isSkippedMoment()) {
-        settled = true
-        reject(new Error(`Google sign in was skipped: ${notification.getSkippedReason()}.`))
-        return
-      }
-
-      if (notification.isDismissedMoment()) {
-        settled = true
-        reject(new Error('Google sign in was dismissed.'))
-      }
+    googleIdentity.renderButton(container, {
+      type: 'standard',
+      theme: 'outline',
+      size: 'large',
+      text: props.label ? 'continue_with' : 'signin_with',
+      shape: 'rectangular',
+      locale: 'pt_BR',
+      width: Math.max(120, Math.floor(container.getBoundingClientRect().width)),
     })
-  })
-}
+  } catch (error) {
+    emit('error', error instanceof Error ? error.message : 'Unable to sign in with Google.')
+  } finally {
+    isInitializing.value = false
+  }
+})
 </script>
+
 <template>
-  <button
-    class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg border border-[#d8e6e9] bg-white px-4 text-sm font-extrabold leading-none text-[#172224] shadow-[0_12px_26px_rgb(18_33_36_/_7%),inset_0_1px_0_rgb(255_255_255_/_90%)] transition duration-180 hover:-translate-y-px hover:border-[#b5d2d8] hover:shadow-[0_16px_34px_rgb(18_33_36_/_11%),0_0_20px_rgb(174_238_255_/_14%),inset_0_1px_0_#fff] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#aeeeff]/60 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-    type="button"
-    :disabled="isPending"
-    @click="requestGoogleCredential"
+  <div
+    class="relative min-h-11 w-full overflow-hidden rounded-lg"
+    :class="{ 'pointer-events-none opacity-65': isPending }"
+    :aria-busy="isInitializing || isPending"
   >
-    <img class="block size-5" :src="googleLogo" alt="" aria-hidden="true" />
-    <span>{{ label ?? 'Entrar com Google' }}</span>
-  </button>
+    <div ref="buttonContainer" class="min-h-11 w-full"></div>
+
+    <div
+      v-if="isInitializing"
+      class="absolute inset-0 flex items-center justify-center gap-2.5 border border-[#d8e6e9] bg-white text-sm font-extrabold text-[#172224]"
+    >
+      <svg class="size-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        />
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4Z"
+        />
+      </svg>
+      <span>Carregando Google…</span>
+    </div>
+  </div>
 </template>

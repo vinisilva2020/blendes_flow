@@ -36,7 +36,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     PATH="/opt/venv/bin:${PATH}" \
-    DJANGO_SETTINGS_MODULE="configuration.settings.beta" \
+    DJANGO_SETTINGS_MODULE="configuration.settings.docker" \
     GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000 --workers=3 --threads=2 --worker-tmp-dir=/dev/shm --timeout=60 --graceful-timeout=30 --keep-alive=5 --max-requests=1000 --max-requests-jitter=100 --access-logfile=- --error-logfile=- --capture-output"
 
 WORKDIR /app
@@ -52,6 +52,8 @@ RUN groupadd --gid 10001 django \
 COPY --from=dependencies /opt/venv /opt/venv
 COPY . /app
 COPY --chmod=0555 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+# A defensive normalization keeps Windows CRLF checkouts executable on Linux.
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint
 
 USER 10001:10001
 
