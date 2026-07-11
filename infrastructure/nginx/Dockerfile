@@ -10,6 +10,11 @@ RUN --mount=type=cache,target=/root/.npm \
     npm ci --no-audit --no-fund
 
 COPY frontend/ ./
+
+# Vite replaces VITE_* references while compiling. These values are public in
+# the browser bundle and must never contain credentials or private keys.
+ARG VITE_API_BASE_URL=/api
+ARG GOOGLE_OAUTH_CLIENT_ID=""
 RUN npm run build
 
 
