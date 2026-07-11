@@ -4,10 +4,9 @@
 .windsurf
 .idea
 *.log
+.env
 .agents
-infrastructure/secrets/*
 skills-lock.json
 skills-lock.yaml
-docs
 *.sqlite3
 prompt.md
