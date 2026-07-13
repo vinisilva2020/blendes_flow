@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Activity, GitPullRequestArrow, ShieldAlert, Waves } from '@lucide/vue'
-
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import OrganizationMapCard from './components/OrganizationMapCard.vue'
 </script>
 
 <template>
   <DashboardLayout>
     <div class="flex min-h-0 w-full flex-col gap-6">
+      <OrganizationMapCard />
       <section
         class="grid grid-cols-1 gap-4 lg:grid-cols-2"
         aria-label="Dashboard content sections"
