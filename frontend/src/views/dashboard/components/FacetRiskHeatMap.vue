@@ -34,16 +34,42 @@ function getCellStyle(value: number) {
   }
 
   const intensity = value / maxValue.value
-  const backgroundAlpha = 0.14 + intensity * 0.48
-  const borderAlpha = 0.08 + intensity * 0.18
-  const textColor = intensity > 0.76 ? 'rgb(255 255 255)' : 'rgb(30 64 175)'
+
+  let backgroundColor = ''
+
+  if (intensity <= 0.33) {
+    backgroundColor = 'rgb(34 197 94)' // verde
+  } else if (intensity <= 0.66) {
+    backgroundColor = 'rgb(234 179 8)' // amarelo
+  } else {
+    backgroundColor = 'rgb(239 68 68)' // vermelho
+  }
 
   return {
-    backgroundColor: `rgb(37 99 235 / ${backgroundAlpha.toFixed(2)})`,
-    borderColor: `rgb(37 99 235 / ${borderAlpha.toFixed(2)})`,
-    color: textColor,
+    backgroundColor,
+    borderColor: backgroundColor,
+    color: intensity > 0.66 ? 'white' : 'black',
   }
 }
+
+function getIntensityLabel(value: number) {
+  if (maxValue.value === 0) {
+    return 'No risk'
+  }
+
+  const intensity = value / maxValue.value
+
+  if (intensity <= 0.33) {
+    return 'Low'
+  }
+
+  if (intensity <= 0.66) {
+    return 'Medium'
+  }
+
+  return 'High'
+}
+
 </script>
 
 <template>
@@ -92,14 +118,41 @@ function getCellStyle(value: number) {
                 class="mx-auto grid size-10 place-items-center rounded-md border text-[0.68rem] font-medium tabular-nums shadow-[inset_0_1px_0_rgb(255_255_255_/_0.35)]"
                 :style="getCellStyle(row.values[layer.key])"
                 :aria-label="`${row.values[layer.key]} risks in ${row.facet} for ${layer.description}`"
-                :title="`${row.facet} / ${layer.description}: ${row.values[layer.key]} risks`"
+                :title="`Facet: ${row.facet}
+Layer: ${layer.description}
+Value: ${row.values[layer.key]} risks
+Intensity: ${getIntensityLabel(row.values[layer.key])}`"
               >
                 {{ row.values[layer.key] }}
               </div>
             </td>
           </tr>
         </tbody>
-      </table>
+           </table>
+    </div>
+
+    <div
+      class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-600"
+      aria-label="Risk intensity legend"
+    >
+      <span class="font-semibold text-slate-900">
+        Risk intensity:
+      </span>
+
+      <div class="flex items-center gap-1.5">
+        <span class="size-3 rounded-sm bg-green-500"></span>
+        Low
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <span class="size-3 rounded-sm bg-yellow-500"></span>
+        Medium
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <span class="size-3 rounded-sm bg-red-500"></span>
+        High
+      </div>
     </div>
   </div>
 </template>

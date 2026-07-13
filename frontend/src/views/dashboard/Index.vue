@@ -2,6 +2,84 @@
 import { Activity, GitPullRequestArrow, ShieldAlert, Waves } from '@lucide/vue'
 
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import FacetRiskHeatMap from './components/FacetRiskHeatMap.vue'
+
+const heatMapLayers = [
+  {
+    key: 'OP',
+    label: 'Operational',
+    description: 'Operational layer',
+  },
+  {
+    key: 'TA',
+    label: 'Tactical',
+    description: 'Tactical layer',
+  },
+  {
+    key: 'ST',
+    label: 'Strategic',
+    description: 'Strategic layer',
+  },
+] as const
+
+const heatMapRows = [
+  {
+    facet: 'WHY',
+    values: {
+      OP: 1,
+      TA: 2,
+      ST: 3,
+    },
+  },
+  {
+    facet: 'WHEN',
+    values: {
+      OP: 4,
+      TA: 5,
+      ST: 6,
+    },
+  },
+  {
+    facet: 'WHO',
+    values: {
+      OP: 0,
+      TA: 7,
+      ST: 2,
+    },
+  },
+  {
+    facet: 'WITH',
+    values: {
+      OP: 5,
+      TA: 1,
+      ST: 4,
+    },
+  },
+  {
+    facet: 'WHEREBY',
+    values: {
+      OP: 2,
+      TA: 3,
+      ST: 1,
+    },
+  },
+  {
+    facet: 'IN',
+    values: {
+      OP: 0,
+      TA: 0,
+      ST: 3,
+    },
+  },
+  {
+    facet: 'OUT',
+    values: {
+      OP: 1,
+      TA: 4,
+      ST: 5,
+    },
+  },
+] as const
 </script>
 
 <template>
@@ -24,7 +102,12 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
             </h2>
           </header>
 
-          <div class="mt-4 h-px bg-slate-200/70 dark:bg-slate-800" aria-hidden="true"></div>
+         <div class="mt-4 h-px bg-slate-200/70 dark:bg-slate-800" aria-hidden="true"></div>
+
+<FacetRiskHeatMap
+  :layers="heatMapLayers"
+  :rows="heatMapRows"
+/>
         </article>
 
         <article
