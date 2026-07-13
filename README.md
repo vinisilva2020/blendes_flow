@@ -75,13 +75,24 @@ frontend.
 ## Ambientes Django
 
 - `local`: desenvolvimento nativo com SQLite;
-- `docker`: Compose com PostgreSQL;
+- `docker`: Compose com PostgreSQL e Redis;
 - `test`: testes com SQLite em memória;
 - `production`: PostgreSQL, HTTPS, cookies seguros e validações estritas.
 
 Os arquivos de settings guardam políticas, não credenciais. A seleção ocorre
 pelo processo: `manage.py` usa `local`; o `.env` de desenvolvimento usa
 `docker` dentro dos containers; o exemplo de produção seleciona `production`.
+
+## Cache
+
+No Docker, o Compose configura automaticamente o backend para usar o serviço
+Redis interno (`redis://cache:6379/1`). O Redis não publica portas no host e os
+dados são descartáveis: ele é cache, não armazenamento persistente.
+
+Fora do Docker, deixe `CACHE_URL` vazio. O Django usa `LocMemCache`, portanto
+`python scripts/project.py dev` não exige Redis. Para usar um Redis externo,
+informe sua URL em `CACHE_URL`; `CACHE_DEFAULT_TIMEOUT` define o TTL padrão e
+`CACHE_KEY_PREFIX` separa as chaves de cada ambiente.
 
 ## Documentação
 

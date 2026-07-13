@@ -154,6 +154,33 @@ DATABASES["default"].setdefault(
 )
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
+# Cache is process-local unless an environment explicitly provides Redis.
+# This keeps native development and tests independent from Docker services.
+CACHE_URL = env("CACHE_URL", default="")
+CACHE_DEFAULT_TIMEOUT = env.int("CACHE_DEFAULT_TIMEOUT", default=300)
+
+if CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": CACHE_URL,
+            "TIMEOUT": CACHE_DEFAULT_TIMEOUT,
+            "OPTIONS": {
+                "socket_connect_timeout": 2,
+                "socket_timeout": 2,
+            },
+            "KEY_PREFIX": env("CACHE_KEY_PREFIX", default="blendesflow"),
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "blendesflow-local",
+            "TIMEOUT": CACHE_DEFAULT_TIMEOUT,
+        },
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
