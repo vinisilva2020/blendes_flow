@@ -25,6 +25,38 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  cache:
+    image: redis:7.4.2-alpine3.21
+    pull_policy: weekly
+    restart: unless-stopped
+    user: redis
+    command:
+      - redis-server
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - allkeys-lru
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+      start_interval: 1s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /data:size=16m,mode=1777
+
   backend:
     build:
       context: ./backend
@@ -36,6 +68,8 @@ services:
     stop_grace_period: 30s
     env_file:
       - ./.env
+    environment:
+      CACHE_URL: ${CACHE_URL:-redis://cache:6379/1}
     expose:
       - "8000"
     volumes:
@@ -50,6 +84,10 @@ services:
       - data
     depends_on:
       database:
+        condition: service_healthy
+        restart: true
+        required: true
+      cache:
         condition: service_healthy
         restart: true
         required: true
