@@ -36,47 +36,47 @@ const heatMapRows = [
     values: {
       OP: 4,
       TA: 5,
-      ST: 6,
+      ST: 0,
     },
   },
   {
     facet: 'WHO',
     values: {
-      OP: 0,
-      TA: 7,
-      ST: 2,
+      OP: 1,
+      TA: 3,
+      ST: 5,
     },
   },
   {
     facet: 'WITH',
     values: {
-      OP: 5,
-      TA: 1,
+      OP: 0,
+      TA: 2,
       ST: 4,
     },
   },
   {
     facet: 'WHEREBY',
     values: {
-      OP: 2,
-      TA: 3,
-      ST: 1,
+      OP: 5,
+      TA: 4,
+      ST: 3,
     },
   },
   {
     facet: 'IN',
     values: {
-      OP: 0,
-      TA: 0,
-      ST: 3,
+      OP: 2,
+      TA: 1,
+      ST: 0,
     },
   },
   {
     facet: 'OUT',
     values: {
-      OP: 1,
-      TA: 4,
-      ST: 5,
+      OP: 2,
+      TA: 5,
+      ST: 3,
     },
   },
 ] as const
