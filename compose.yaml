@@ -2,16 +2,16 @@ name: blendesflow
 
 services:
   database:
-    image: postgres:17-alpine@sha256:979c4379dd698aba0b890599a6104e082035f98ef31d9b9291ec22f2b13059ca
+    image: postgres:17.10-alpine3.24
+    pull_policy: weekly
     restart: unless-stopped
+    stop_grace_period: 30s
     env_file:
-      - ./backend/.env
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    secrets:
-      - postgres_password
+      - ./.env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
     networks:
       - data
     healthcheck:
@@ -21,57 +21,120 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+      start_interval: 2s
     security_opt:
       - no-new-privileges:true
+
+  cache:
+    image: redis:7.4.2-alpine3.21
+    pull_policy: weekly
+    restart: unless-stopped
+    user: redis
+    command:
+      - redis-server
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - allkeys-lru
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+      start_interval: 1s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /data:size=16m,mode=1777
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      pull: true
     image: blendesflow-backend:local
     restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
     env_file:
-      - ./backend/.env
+      - ./.env
     environment:
-      DJANGO_SECRET_KEY_FILE: /run/secrets/django_secret_key
-      JWT_SIGNING_KEY_FILE: /run/secrets/jwt_signing_key
-      DB_PASSWORD_FILE: /run/secrets/postgres_password
-    secrets:
-      - django_secret_key
-      - jwt_signing_key
-      - postgres_password
+      CACHE_URL: ${CACHE_URL:-redis://cache:6379/1}
     expose:
       - "8000"
     volumes:
-      - django_static:/var/www/static
-      - django_media:/var/www/media
+      - type: volume
+        source: django_static
+        target: /var/www/static
+      - type: volume
+        source: django_media
+        target: /var/www/media
     networks:
       - edge
       - data
     depends_on:
       database:
         condition: service_healthy
+        restart: true
+        required: true
+      cache:
+        condition: service_healthy
+        restart: true
+        required: true
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
 
   nginx:
     build:
       context: .
       dockerfile: infrastructure/nginx/Dockerfile
+      pull: true
+      args:
+        VITE_API_BASE_URL: /api
+        GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
     image: blendesflow-nginx:local
     restart: unless-stopped
+    init: true
+    stop_grace_period: 15s
     ports:
-      - "80:8080"
+      - name: http
+        target: 8080
+        published: "80"
+        host_ip: 127.0.0.1
+        protocol: tcp
+        app_protocol: http
+        mode: ingress
     volumes:
-      - django_static:/var/www/static:ro
-      - django_media:/var/www/media:ro
+      - type: volume
+        source: django_static
+        target: /var/www/static
+        read_only: true
+      - type: volume
+        source: django_media
+        target: /var/www/media
+        read_only: true
     networks:
       - edge
     depends_on:
       backend:
         condition: service_healthy
+        restart: true
+        required: true
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -91,11 +154,3 @@ volumes:
   postgres_data:
   django_static:
   django_media:
-
-secrets:
-  django_secret_key:
-    file: ./infrastructure/secrets/django_secret_key.txt
-  jwt_signing_key:
-    file: ./infrastructure/secrets/jwt_signing_key.txt
-  postgres_password:
-    file: ./infrastructure/secrets/postgres_password.txt

@@ -2,11 +2,11 @@
 set -eu
 
 case "${DJANGO_SETTINGS_MODULE:-}" in
-    configuration.settings.beta|configuration.settings.prod)
+    configuration.settings.docker|configuration.settings.production)
         ;;
     *)
         echo >&2 \
-            "Docker requires configuration.settings.beta or configuration.settings.prod."
+            "Docker requires configuration.settings.docker or configuration.settings.production."
         exit 64
         ;;
 esac

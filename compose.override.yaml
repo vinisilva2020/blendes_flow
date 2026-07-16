@@ -1,0 +1,78 @@
+# Development-only overrides. Docker Compose loads this file automatically.
+# Production must explicitly use only compose.yaml.
+
+services:
+  backend:
+    environment:
+      GUNICORN_CMD_ARGS: >-
+        --bind=0.0.0.0:8000
+        --workers=1
+        --threads=1
+        --reload
+        --reload-engine=poll
+        --worker-tmp-dir=/dev/shm
+        --timeout=60
+        --graceful-timeout=10
+        --access-logfile=-
+        --error-logfile=-
+        --capture-output
+    ports:
+      - name: django-dev
+        target: 8000
+        published: "8000"
+        host_ip: 127.0.0.1
+        protocol: tcp
+        app_protocol: http
+        mode: ingress
+    volumes:
+      - type: bind
+        source: ./backend
+        target: /app
+        read_only: true
+
+  frontend:
+    build:
+      context: .
+      dockerfile: infrastructure/nginx/Dockerfile
+      target: frontend-build
+      pull: true
+    image: blendesflow-frontend:dev
+    init: true
+    working_dir: /app
+    command: npm run dev -- --host 0.0.0.0
+    restart: unless-stopped
+    environment:
+      GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID:-}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://127.0.0.1:8000/api}
+    ports:
+      - name: vite-dev
+        target: 5173
+        published: "5173"
+        host_ip: 127.0.0.1
+        protocol: tcp
+        app_protocol: http
+        mode: ingress
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /app
+        read_only: true
+      - type: volume
+        source: frontend_node_modules
+        target: /app/node_modules
+    networks:
+      - edge
+    depends_on:
+      backend:
+        condition: service_healthy
+        restart: true
+        required: true
+    security_opt:
+      - no-new-privileges:true
+
+  nginx:
+    profiles:
+      - integrated
+
+volumes:
+  frontend_node_modules:

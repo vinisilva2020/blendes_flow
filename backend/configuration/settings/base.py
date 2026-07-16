@@ -11,36 +11,21 @@ from configuration.environment import load_environment
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Process variables take precedence; backend/.env is only a local convenience.
+# Process variables take precedence over the single root .env file.
 load_environment()
 
 env = environ.Env()
 
 
-def env_or_file(name):
-    """Read a secret from NAME or from the path stored in NAME_FILE."""
-    value = env(name, default=None)
-    if value:
-        return value
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY",
+    default="unsafe-development-only-django-secret-key",
+)
 
-    secret_file = env(f"{name}_FILE", default=None)
-    if secret_file:
-        secret_path = Path(secret_file)
-        if not secret_path.is_absolute():
-            secret_path = BASE_DIR / secret_path
-        try:
-            return secret_path.read_text(encoding="utf-8").strip()
-        except OSError as exc:
-            raise ImproperlyConfigured(
-                f"Unable to read {name}_FILE: {secret_path}"
-            ) from exc
-
-    raise ImproperlyConfigured(f"Set {name} or {name}_FILE.")
-
-
-SECRET_KEY = env_or_file("DJANGO_SECRET_KEY")
-
-JWT_SIGNING_KEY = env_or_file("JWT_SIGNING_KEY")
+JWT_SIGNING_KEY = env(
+    "JWT_SIGNING_KEY",
+    default="unsafe-development-only-jwt-signing-key",
+)
 if len(JWT_SIGNING_KEY.encode("utf-8")) < 32:
     raise ImproperlyConfigured("JWT_SIGNING_KEY must contain at least 32 bytes.")
 if JWT_SIGNING_KEY == SECRET_KEY:
@@ -137,6 +122,20 @@ TEMPLATES = [
 WSGI_APPLICATION = "configuration.wsgi.application"
 ASGI_APPLICATION = "configuration.asgi.application"
 
+def postgres_database():
+    """Build the PostgreSQL connection shared by Docker and production."""
+    return {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST", default="database"),
+        "PORT": env.int("POSTGRES_PORT", default=5432),
+        "CONN_MAX_AGE": env.int("DATABASE_CONN_MAX_AGE", default=0),
+        "CONN_HEALTH_CHECKS": True,
+    }
+
+
 database_url = env("DATABASE_URL", default=None)
 if database_url:
     DATABASES = {
@@ -145,20 +144,42 @@ if database_url:
 else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("DB_NAME"),
-            "USER": env("DB_USER"),
-            "PASSWORD": env_or_file("DB_PASSWORD"),
-            "HOST": env("DB_HOST", default="database"),
-            "PORT": env.int("DB_PORT", default=5432),
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         },
     }
 
-DATABASES["default"]["CONN_MAX_AGE"] = env.int(
-    "DATABASE_CONN_MAX_AGE",
-    default=0,
+DATABASES["default"].setdefault(
+    "CONN_MAX_AGE", env.int("DATABASE_CONN_MAX_AGE", default=0)
 )
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
+# Cache is process-local unless an environment explicitly provides Redis.
+# This keeps native development and tests independent from Docker services.
+CACHE_URL = env("CACHE_URL", default="")
+CACHE_DEFAULT_TIMEOUT = env.int("CACHE_DEFAULT_TIMEOUT", default=300)
+
+if CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": CACHE_URL,
+            "TIMEOUT": CACHE_DEFAULT_TIMEOUT,
+            "OPTIONS": {
+                "socket_connect_timeout": 2,
+                "socket_timeout": 2,
+            },
+            "KEY_PREFIX": env("CACHE_KEY_PREFIX", default="blendesflow"),
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "blendesflow-local",
+            "TIMEOUT": CACHE_DEFAULT_TIMEOUT,
+        },
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
